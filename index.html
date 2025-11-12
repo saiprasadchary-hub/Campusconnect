@@ -3,2585 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusConnect - Student Marketplace</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0; 
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --primary: #4285F4;
-            --primary-light: #8AB4F8;
-            --primary-dark: #1A73E8;
-            --secondary: #34A853;
-            --accent: #9C27B0;
-            --light: #FFFFFF;
-            --light-gray: #F8F9FA;
-            --medium-gray: #E8EAED;
-            --dark-gray: #5F6368;
-            --dark: #202124;
-            --success: #34A853;
-            --warning: #FBBC05;
-            --error: #EA4335;
-            --card-bg: #FFFFFF;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
-            --sidebar-width: 250px;
-        }
-
-        body {
-            background: var(--light-gray);
-            color: var(--dark);
-            min-height: 100vh;
-        }
-
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar for Desktop */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--light);
-            color: var(--dark);
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-            z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary);
-            padding: 1.5rem 1rem;
-            border-bottom: 1px solid var(--medium-gray);
-        }
-
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            text-decoration: none;
-            color: var(--dark);
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-        }
-
-        .nav-icon {
-            width: 24px;
-            text-align: center;
-        }
-
-        .nav-label {
-            font-weight: 500;
-        }
-
-        .nav-badge {
-            background: var(--error);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: auto;
-        }
-
-        /* Main Content Area */
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding-bottom: 80px;
-            background: var(--light-gray);
-        }
-
-        /* Header */
-        .header {
-            background: var(--light);
-            color: var(--dark);
-            padding: 1.2rem 1.5rem 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-bottom: 1px solid var(--medium-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .mobile-header {
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: var(--light);
-            border-bottom: 1px solid var(--medium-gray);
-        }
-
-        .mobile-menu-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary);
-            cursor: pointer;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .search-bar {
-            background: var(--light-gray);
-            border: 1px solid var(--medium-gray);
-            border-radius: 24px;
-            padding: 0.7rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-            width: 400px;
-        }
-
-        .search-bar:focus-within {
-            box-shadow: 0 1px 6px rgba(0,0,0,0.1);
-            border-color: var(--primary);
-        }
-
-        .search-bar input {
-            border: none;
-            background: none;
-            outline: none;
-            flex: 1;
-            font-size: 1rem;
-            color: var(--dark);
-        }
-
-        .search-bar i {
-            color: var(--dark-gray);
-        }
-
-        .user-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .user-action-btn {
-            background: var(--light);
-            color: var(--dark);
-            border: 1px solid var(--medium-gray);
-            padding: 0.7rem 1rem;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            transition: all 0.2s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .user-action-btn:hover {
-            background: var(--primary-light);
-            border-color: var(--primary);
-            color: var(--primary-dark);
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: 0.8rem;
-            overflow-x: auto;
-            padding: 1rem 1.5rem;
-            scrollbar-width: none;
-        }
-
-        .quick-actions::-webkit-scrollbar {
-            display: none;
-        }
-
-        .action-btn {
-            background: var(--light);
-            color: var(--dark);
-            border: 1px solid var(--medium-gray);
-            padding: 0.7rem 1rem;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            transition: all 0.2s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .action-btn:hover {
-            background: var(--primary-light);
-            border-color: var(--primary);
-            color: var(--primary-dark);
-        }
-
-        /* Content Pages */
-        .page {
-            display: none;
-            animation: fadeIn 0.3s ease;
-            padding: 1.5rem;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Section Headers */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 1.5rem 0 1rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .see-all {
-            color: var(--primary);
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .see-all:hover {
-            color: var(--primary-dark);
-        }
-
-        /* Cards */
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            box-shadow: var(--shadow);
-            transition: all 0.2s;
-            cursor: pointer;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        /* Products Grid */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .product-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: all 0.2s;
-            cursor: pointer;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .product-image {
-            height: 180px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: var(--secondary);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .product-content {
-            padding: 1.2rem;
-        }
-
-        .product-title {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--dark);
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .product-price {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin: 0.3rem 0;
-        }
-
-        .product-seller {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.8rem;
-            color: var(--dark-gray);
-            margin-bottom: 0.8rem;
-        }
-
-        .seller-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-
-        .buy-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.7rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-        }
-
-        .buy-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        /* Events */
-        .events-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .event-card {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .event-date {
-            background: var(--primary);
-            color: white;
-            padding: 0.8rem;
-            border-radius: 10px;
-            text-align: center;
-            min-width: 70px;
-        }
-
-        .event-day {
-            font-size: 1.5rem;
-            font-weight: 600;
-            line-height: 1;
-        }
-
-        .event-month {
-            font-size: 0.8rem;
-            opacity: 0.9;
-        }
-
-        .event-details {
-            flex: 1;
-        }
-
-        .event-title {
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--dark);
-        }
-
-        .event-location {
-            font-size: 0.9rem;
-            color: var(--dark-gray);
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .event-time {
-            font-size: 0.9rem;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .register-btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .register-btn:hover {
-            background: #2E8B47;
-            transform: translateY(-1px);
-        }
-
-        .register-btn.registered {
-            background: var(--dark-gray);
-            cursor: not-allowed;
-        }
-
-        /* Notifications */
-        .notifications-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .notification-card {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-            padding: 1.2rem;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .notification-card:hover {
-            transform: translateX(3px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .notification-card.read {
-            opacity: 0.7;
-        }
-
-        .notification-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .notification-icon.success {
-            background: var(--success);
-        }
-
-        .notification-icon.warning {
-            background: var(--warning);
-        }
-
-        .notification-icon.info {
-            background: var(--primary);
-        }
-
-        .notification-content {
-            flex: 1;
-        }
-
-        .notification-title {
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--dark);
-        }
-
-        .notification-message {
-            font-size: 0.9rem;
-            color: var(--dark-gray);
-            margin-bottom: 0.5rem;
-            line-height: 1.4;
-        }
-
-        .notification-time {
-            font-size: 0.75rem;
-            color: var(--dark-gray);
-        }
-
-        /* Profile */
-        .profile-header {
-            text-align: center;
-            padding: 2rem 1rem;
-            background: var(--light);
-            color: var(--dark);
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--medium-gray);
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            margin: 0 auto 1rem;
-            border: 3px solid var(--medium-gray);
-        }
-
-        .profile-name {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-
-        .profile-role {
-            color: var(--dark-gray);
-            font-size: 1rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-item {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .stat-item:hover {
-            transform: translateY(-2px);
-            background: var(--primary);
-            color: white;
-        }
-
-        .stat-item:hover .stat-value {
-            color: white;
-        }
-
-        .stat-value {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--dark-gray);
-        }
-
-        .stat-item:hover .stat-label {
-            color: white;
-        }
-
-        .profile-menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.2rem;
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            transition: all 0.2s;
-            cursor: pointer;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .menu-item:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateX(3px);
-        }
-
-        .menu-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 8px;
-            background: var(--light-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-        }
-
-        .menu-item:hover .menu-icon {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .menu-text {
-            flex: 1;
-            font-weight: 500;
-        }
-
-        /* Bottom Navigation for Mobile */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--light);
-            display: none;
-            justify-content: space-around;
-            padding: 0.7rem 0;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            z-index: 1000;
-            border-top: 1px solid var(--medium-gray);
-        }
-
-        .nav-item-mobile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-            text-decoration: none;
-            color: var(--dark-gray);
-            transition: all 0.2s;
-            padding: 0.5rem;
-            border-radius: 10px;
-            min-width: 60px;
-            cursor: pointer;
-        }
-
-        .nav-item-mobile.active {
-            color: var(--primary);
-            background: var(--primary-light);
-        }
-
-        .nav-icon-mobile {
-            font-size: 1.2rem;
-        }
-
-        .nav-label-mobile {
-            font-size: 0.65rem;
-            font-weight: 500;
-        }
-
-        .nav-badge-mobile {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--error);
-            color: white;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 1.8rem;
-            width: 100%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        @keyframes modalSlideIn {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.4rem;
-            color: var(--dark-gray);
-            cursor: pointer;
-            padding: 0.4rem;
-            border-radius: 50%;
-            transition: all 0.2s;
-        }
-
-        .close-modal:hover {
-            background: var(--light-gray);
-        }
-
-        .form-group {
-            margin-bottom: 1.3rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 0.9rem;
-            border: 1px solid var(--medium-gray);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.2s;
-            background: var(--light);
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
-        }
-
-        .form-textarea {
-            height: 120px;
-            resize: vertical;
-        }
-
-        .btn {
-            padding: 0.9rem 1.8rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .btn-block {
-            width: 100%;
-        }
-
-        /* Search Results */
-        .search-results {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-top: 0.5rem;
-            box-shadow: var(--shadow-hover);
-            display: none;
-            position: absolute;
-            width: 400px;
-            z-index: 101;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .search-results.active {
-            display: block;
-        }
-
-        .search-result-item {
-            padding: 0.8rem;
-            border-bottom: 1px solid var(--medium-gray);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .search-result-item:hover {
-            background: var(--light-gray);
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Notes Page */
-        .notes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .note-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            transition: all 0.2s;
-            cursor: pointer;
-            text-align: center;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .note-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .note-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 0.8rem;
-        }
-
-        .note-title {
-            font-weight: 500;
-            margin-bottom: 0.4rem;
-            color: var(--dark);
-            font-size: 1.1rem;
-        }
-
-        .note-subject {
-            color: var(--dark-gray);
-            font-size: 0.9rem;
-        }
-
-        .download-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.6rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 0.8rem;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-        }
-
-        .download-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        /* My Listings Page */
-        .listing-item {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            padding: 1.2rem;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin-bottom: 1rem;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .listing-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 10px;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .listing-details {
-            flex: 1;
-        }
-
-        .listing-title {
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--dark);
-            font-size: 1.1rem;
-        }
-
-        .listing-price {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-
-        .listing-status {
-            padding: 0.3rem 0.7rem;
-            border-radius: 16px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            display: inline-block;
-        }
-
-        .status-available {
-            background: var(--success);
-            color: white;
-        }
-
-        .status-sold {
-            background: var(--dark-gray);
-            color: white;
-        }
-
-        /* Saved Items Page */
-        .saved-items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        /* Help & Support Page */
-        .help-section {
-            margin-bottom: 2rem;
-        }
-
-        .help-item {
-            padding: 1.2rem;
-            background: var(--card-bg);
-            border-radius: 10px;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .help-item:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateX(3px);
-        }
-
-        /* Utility Classes */
-        .hidden {
-            display: none !important;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mb-1 {
-            margin-bottom: 1rem;
-        }
-
-        .mb-2 {
-            margin-bottom: 2rem;
-        }
-
-        .mt-1 {
-            margin-top: 1rem;
-        }
-
-        .mt-2 {
-            margin-top: 2rem;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark);
-            color: white;
-            padding: 0.8rem 1.2rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            z-index: 3000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-        }
-
-        .toast.show {
-            display: block;
-            animation: toastSlideUp 0.3s ease;
-        }
-
-        @keyframes toastSlideUp {
-            from { bottom: 60px; opacity: 0; }
-            to { bottom: 90px; opacity: 1; }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .header {
-                padding: 1rem;
-            }
-            
-            .search-bar {
-                width: 300px;
-            }
-            
-            .mobile-header {
-                display: flex;
-            }
-            
-            .bottom-nav {
-                display: flex;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .search-bar {
-                width: 200px;
-            }
-            
-            .products-grid, .notes-grid, .saved-items-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-            
-            .events-list {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .profile-menu {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-            
-            .header-content {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .search-bar {
-                width: 100%;
-            }
-            
-            .search-results {
-                width: calc(100% - 2rem);
-            }
-            
-            .products-grid, .notes-grid, .saved-items-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                padding: 1rem;
-            }
-            
-            .page {
-                padding: 1rem;
-            }
-        }
-    </style>
+    <title>AutoFlow AI Web Edition</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar for Desktop -->
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <i class="fas fa-university"></i>
-                <span>CampusConnect</span>
-            </div>
-            
-            <div class="sidebar-nav">
-                <div class="nav-item active" onclick="showPage('home')">
-                    <i class="fas fa-home nav-icon"></i>
-                    <span class="nav-label">Home</span>
-                </div>
-                <div class="nav-item" onclick="showPage('events')">
-                    <i class="fas fa-calendar-alt nav-icon"></i>
-                    <span class="nav-label">Events</span>
-                </div>
-                <div class="nav-item" onclick="showPage('notes')">
-                    <i class="fas fa-file-alt nav-icon"></i>
-                    <span class="nav-label">Study Notes</span>
-                </div>
-                <div class="nav-item" onclick="showPage('notifications')">
-                    <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
-                        <i class="fas fa-bell nav-icon"></i>
-                        <span class="nav-label">Notifications</span>
-                        <span class="nav-badge" id="sidebarNotificationBadge">3</span>
-                    </div>
-                </div>
-                <div class="nav-item" onclick="showPage('profile')">
-                    <i class="fas fa-user nav-icon"></i>
-                    <span class="nav-label">Profile</span>
-                </div>
-                <div class="nav-item" onclick="showPage('myListings')">
-                    <i class="fas fa-shopping-bag nav-icon"></i>
-                    <span class="nav-label">My Listings</span>
-                </div>
-                <div class="nav-item" onclick="showPage('savedItems')">
-                    <i class="fas fa-heart nav-icon"></i>
-                    <span class="nav-label">Saved Items</span>
-                </div>
-                <div class="nav-item" onclick="showPage('helpSupport')">
-                    <i class="fas fa-question-circle nav-icon"></i>
-                    <span class="nav-label">Help & Support</span>
-                </div>
-                <div class="nav-item" onclick="showSellModal()">
-                    <i class="fas fa-tag nav-icon"></i>
-                    <span class="nav-label">Sell Item</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content Area -->
-        <div class="main-content">
-            <!-- Mobile Header -->
-            <div class="mobile-header">
-                <button class="mobile-menu-btn" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
+    <header>
+        <div class="container">
+            <div class="header-content">
                 <div class="logo">
-                    <i class="fas fa-university"></i>
-                    <span>CampusConnect</span>
-                </div>
-                <div style="width: 40px;"></div> <!-- Spacer for alignment -->
-            </div>
-
-            <!-- Desktop Header -->
-            <div class="header">
-                <div class="header-content">
-                    <div class="search-bar">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search for books, notes, events..." onkeyup="handleSearch()">
+                    <div class="logo-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 18C5.582 18 2 14.418 2 10C2 5.582 5.582 2 10 2C14.418 2 18 5.582 18 10C18 14.418 14.418 18 10 18Z" fill="white"/>
+                            <path d="M10 4C6.686 4 4 6.686 4 10C4 13.314 6.686 16 10 16C13.314 16 16 13.314 16 10C16 6.686 13.314 4 10 4ZM10 14C7.791 14 6 12.209 6 10C6 7.791 7.791 6 10 6C12.209 6 14 7.791 14 10C14 12.209 12.209 14 10 14Z" fill="white"/>
+                        </svg>
                     </div>
-                    
-                    <!-- Search Results -->
-                    <div class="search-results" id="searchResults">
-                        <!-- Search results will appear here -->
-                    </div>
+                    <span>AutoFlow AI</span>
                 </div>
                 
-                <div class="user-actions">
-                    <button class="user-action-btn" onclick="showSellModal()">
-                        <i class="fas fa-tag"></i> Sell Item
+                <button class="mobile-menu-btn" id="mobile-menu-toggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="currentColor"/>
+                    </svg>
+                </button>
+                
+                <nav>
+                    <ul>
+                        <li><a href="#dashboard" class="active">Dashboard</a></li>
+                        <li><a href="#workflows">Workflows</a></li>
+                        <li><a href="#agents">Agents</a></li>
+                        <li><a href="#analytics">Analytics</a></li>
+                        <li><a href="#settings">Settings</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <button class="btn btn-ghost tooltip" data-tooltip="Search (Ctrl+K)">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.7422 10.3439C12.5329 9.2673 13 7.9382 13 6.5C13 2.91015 10.0899 0 6.5 0C2.91015 0 0 2.91015 0 6.5C0 10.0899 2.91015 13 6.5 13C7.93858 13 9.26801 12.5327 10.3448 11.7415L10.3439 11.7422C10.3734 11.7822 10.4062 11.8204 10.4424 11.8566L14.2929 15.7071C14.6834 16.0976 15.3166 16.0976 15.7071 15.7071C16.0976 15.3166 16.0976 14.6834 15.7071 14.2929L11.8566 10.4424C11.8204 10.4062 11.7822 10.3734 11.7422 10.3439ZM12 6.5C12 9.53757 9.53757 12 6.5 12C3.46243 12 1 9.53757 1 6.5C1 3.46243 3.46243 1 6.5 1C9.53757 1 12 3.46243 12 6.5Z" fill="currentColor"/>
+                        </svg>
                     </button>
-                    <button class="user-action-btn" onclick="showCreateEventModal()">
-                        <i class="fas fa-calendar-plus"></i> Create Event
+                    <button class="btn btn-ghost tooltip" data-tooltip="Notifications">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 0C6.89543 0 6 0.89543 6 2V2.5C3.79086 2.5 2 4.29086 2 6.5V10.5L0 12.5V13H16V12.5L14 10.5V6.5C14 4.29086 12.2091 2.5 10 2.5V2C10 0.89543 9.10457 0 8 0ZM8 1C8.55228 1 9 1.44772 9 2V2.5H7V2C7 1.44772 7.44772 1 8 1ZM4 14C4 15.1046 4.89543 16 6 16H10C11.1046 16 12 15.1046 12 14H4Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-outline" id="theme-toggle">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15V1Z" fill="currentColor"/>
+                        </svg>
+                        <span>Dark Mode</span>
+                    </button>
+                    <button class="btn btn-primary" id="new-workflow">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 1C7 0.447715 7.44772 0 8 0C8.55228 0 9 0.447715 9 1V7H15C15.5523 7 16 7.44772 16 8C16 8.55228 15.5523 9 15 9H9V15C9 15.5523 8.55228 16 8 16C7.44772 16 7 15.5523 7 15V9H1C0.447715 9 0 8.55228 0 8C0 7.44772 0.447715 7 1 7H7V1Z" fill="currentColor"/>
+                        </svg>
+                        <span>New Workflow</span>
                     </button>
                 </div>
             </div>
+        </div>
+    </header>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button class="action-btn" onclick="showMarketplace()">
-                    <i class="fas fa-shopping-cart"></i> Buy
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-nav">
+            <a href="#dashboard" class="active">Dashboard</a>
+            <a href="#workflows">Workflows</a>
+            <a href="#agents">Agents</a>
+            <a href="#analytics">Analytics</a>
+            <a href="#settings">Settings</a>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Intelligent Automation with Multi-Agent AI</h1>
+            <p>AutoFlow AI Web Edition simulates a team of specialized AI agents working together to accomplish your goals. No backend required - everything runs in your browser.</p>
+            <div class="hero-actions">
+                <button class="btn btn-primary" id="try-demo">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM6 11.5L2.5 8L3.91421 6.58579L6 8.67157L12.0858 2.58579L13.5 4L6 11.5Z" fill="currentColor"/>
+                    </svg>
+                    <span>Try Demo</span>
                 </button>
-                <button class="action-btn" onclick="showSellModal()">
-                    <i class="fas fa-tag"></i> Sell
-                </button>
-                <button class="action-btn" onclick="showPage('events')">
-                    <i class="fas fa-calendar-alt"></i> Events
-                </button>
-                <button class="action-btn" onclick="showPage('notes')">
-                    <i class="fas fa-file-alt"></i> Notes
-                </button>
-                <button class="action-btn" onclick="showPage('notifications')">
-                    <i class="fas fa-bell"></i> Notifications
+                <button class="btn btn-outline" id="learn-more">
+                    <span>Learn More</span>
                 </button>
             </div>
+            <div class="hero-features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="white"/>
+                            <path d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6ZM12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <h3>Multi-Agent</h3>
+                    <p>5 specialized AI agents working in harmony</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2.05C18.05 2.55 22 6.81 22 12C22 17.52 17.52 22 12 22C6.81 22 2.55 18.05 2.05 13H11V2.05Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <h3>Fast Execution</h3>
+                    <p>Real-time simulation with optimized performance</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM12 11H19C18.47 15.93 15.61 20.19 12 21.88C8.39 20.19 5.53 15.93 5 11H12Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <h3>Private & Secure</h3>
+                    <p>Runs entirely offline in your browser</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <!-- Content Pages -->
-            <div class="main-content-pages">
-                <!-- Home Page -->
-                <div id="home" class="page active">
-                    <div class="section-header">
-                        <h2 class="section-title">Trending Items</h2>
-                        <a class="see-all" onclick="showMarketplace()">See All</a>
+    <section class="dashboard container" id="dashboard">
+        <div class="dashboard-main">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Overview</h2>
+                    <div class="badge">Live</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">Workflows Completed</div>
                     </div>
-                    
-                    <div class="products-grid" id="trendingProducts">
-                        <!-- Trending products will be loaded here -->
+                    <div class="stat-card">
+                        <div class="stat-value">98%</div>
+                        <div class="stat-label">Success Rate</div>
                     </div>
-
-                    <div class="section-header">
-                        <h2 class="section-title">Upcoming Events</h2>
-                        <a class="see-all" onclick="showPage('events')">See All</a>
+                    <div class="stat-card">
+                        <div class="stat-value">3.2m</div>
+                        <div class="stat-label">Avg. Duration</div>
                     </div>
-                    
-                    <div class="events-list" id="upcomingEvents">
-                        <!-- Upcoming events will be loaded here -->
+                    <div class="stat-card">
+                        <div class="stat-value">5/5</div>
+                        <div class="stat-label">Agents Active</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Events Page -->
-                <div id="events" class="page">
-                    <div class="section-header">
-                        <h2 class="section-title">College Events</h2>
-                        <a class="see-all" onclick="showCreateEventModal()">Create Event</a>
-                    </div>
-                    
-                    <div class="events-list" id="allEvents">
-                        <!-- All events will be loaded here -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Agent Activity</h2>
+                    <div class="agent-bubbles">
+                        <div class="agent-bubble" id="planner-bubble">
+                            <div class="status"></div>
+                            <span>Planner</span>
+                        </div>
+                        <div class="agent-bubble" id="executor-bubble">
+                            <div class="status"></div>
+                            <span>Executor</span>
+                        </div>
+                        <div class="agent-bubble" id="qa-bubble">
+                            <div class="status"></div>
+                            <span>QA</span>
+                        </div>
+                        <div class="agent-bubble" id="memory-bubble">
+                            <div class="status"></div>
+                            <span>Memory</span>
+                        </div>
+                        <div class="agent-bubble" id="report-bubble">
+                            <div class="status"></div>
+                            <span>Report</span>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Notes Page -->
-                <div id="notes" class="page">
-                    <div class="section-header">
-                        <h2 class="section-title">Study Notes</h2>
-                        <a class="see-all" onclick="showUploadNotesModal()">Upload Notes</a>
-                    </div>
-                    
-                    <div class="notes-grid" id="notesGrid">
-                        <!-- Notes will be loaded here -->
-                    </div>
-                </div>
-
-                <!-- Notifications Page -->
-                <div id="notifications" class="page">
-                    <div class="section-header">
-                        <h2 class="section-title">Notifications</h2>
-                        <a class="see-all" onclick="markAllNotificationsRead()">Mark All Read</a>
-                    </div>
-                    
-                    <div class="notifications-list" id="notificationsList">
-                        <!-- Notifications will be loaded here -->
-                    </div>
-                </div>
-
-                <!-- Profile Page -->
-                <div id="profile" class="page">
-                    <div class="profile-header">
-                        <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h1 class="profile-name">Sai Prasad</h1>
-                        <p class="profile-role">Computer Science Student</p>
-                    </div>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-item" onclick="showPage('myListings')">
-                            <div class="stat-value">12</div>
-                            <div class="stat-label">Listings</div>
-                        </div>
-                        <div class="stat-item" onclick="showPage('soldItems')">
-                            <div class="stat-value">8</div>
-                            <div class="stat-label">Sold</div>
-                        </div>
-                        <div class="stat-item" onclick="showRatingsModal()">
-                            <div class="stat-value">4.8</div>
-                            <div class="stat-label">Rating</div>
-                        </div>
-                    </div>
-                    
-                    <div class="profile-menu">
-                        <div class="menu-item" onclick="showEditProfileModal()">
-                            <div class="menu-icon">
-                                <i class="fas fa-user-edit"></i>
+                <div class="activity-feed" id="activity-feed">
+                    <div class="activity-item">
+                        <div class="activity-avatar" style="background-color: #1a73e8;">P</div>
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="activity-agent">Planner Agent</span>
+                                <span class="activity-time">Just now</span>
                             </div>
-                            <div class="menu-text">Edit Profile</div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        <div class="menu-item" onclick="showPage('myListings')">
-                            <div class="menu-icon">
-                                <i class="fas fa-shopping-bag"></i>
+                            <div class="activity-message">
+                                Ready to break down your goals into actionable tasks.
                             </div>
-                            <div class="menu-text">My Listings</div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        <div class="menu-item" onclick="showPage('savedItems')">
-                            <div class="menu-icon">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <div class="menu-text">Saved Items</div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        <div class="menu-item" onclick="showSettingsModal()">
-                            <div class="menu-icon">
-                                <i class="fas fa-cog"></i>
-                            </div>
-                            <div class="menu-text">Settings</div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        <div class="menu-item" onclick="showPage('helpSupport')">
-                            <div class="menu-icon">
-                                <i class="fas fa-question-circle"></i>
-                            </div>
-                            <div class="menu-text">Help & Support</div>
-                            <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- My Listings Page -->
-                <div id="myListings" class="page">
-                    <div class="section-header">
-                        <h2 class="section-title">My Listings</h2>
-                        <a class="see-all" onclick="showPage('profile')">Back to Profile</a>
-                    </div>
-                    
-                    <div id="myListingsContainer">
-                        <!-- User's listings will be loaded here -->
-                    </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Task Timeline</h2>
+                    <button class="btn btn-outline" id="export-timeline">Export JSON</button>
                 </div>
-
-                <!-- Saved Items Page -->
-                <div id="savedItems" class="page">
-                    <div class="section-header">
-                        <h2 class="section-title">Saved Items</h2>
-                        <a class="see-all" onclick="showPage('profile')">Back to Profile</a>
-                    </div>
-                    
-                    <div class="saved-items-grid" id="savedItemsGrid">
-                        <!-- Saved items will be loaded here -->
-                    </div>
-                </div>
-
-                <!-- Help & Support Page -->
-                <div id="helpSupport" class="page">
-                    <div class="section-header">
-                        <h2 class="section-title">Help & Support</h2>
-                        <a class="see-all" onclick="showPage('profile')">Back to Profile</a>
-                    </div>
-                    
-                    <div class="help-section">
-                        <h3 class="mb-1">Frequently Asked Questions</h3>
-                        <div class="help-item" onclick="showFAQAnswer(1)">How do I sell an item?</div>
-                        <div class="help-item" onclick="showFAQAnswer(2)">How do I contact a seller?</div>
-                        <div class="help-item" onclick="showFAQAnswer(3)">What payment methods are accepted?</div>
-                        <div class="help-item" onclick="showFAQAnswer(4)">How do I report an issue?</div>
-                    </div>
-
-                    <div class="help-section">
-                        <h3 class="mb-1">Contact Support</h3>
-                        <div class="card">
-                            <p><strong>Email:</strong> support@campusconnect.edu</p>
-                            <p><strong>Phone:</strong> (555) 123-4567</p>
-                            <p><strong>Office Hours:</strong> Mon-Fri, 9AM-5PM</p>
-                            <button class="btn btn-primary mt-1" onclick="contactSupport()">
-                                <i class="fas fa-envelope"></i> Send Message
-                            </button>
+                <div class="timeline" id="task-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-title">Waiting for input</span>
+                                <span class="timeline-status">Idle</span>
+                            </div>
+                            <p class="timeline-desc">Enter a goal in the command console to begin automation.</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Workflow Progress</h2>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>Current Task: <span id="current-task">None</span></span>
+                        <span><span id="progress-percent">0</span>% Complete</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation for Mobile -->
-        <div class="bottom-nav">
-            <div class="nav-item-mobile active" onclick="showPage('home')">
-                <i class="fas fa-home nav-icon-mobile"></i>
-                <span class="nav-label-mobile">Home</span>
-            </div>
-            <div class="nav-item-mobile" onclick="showPage('events')">
-                <i class="fas fa-calendar-alt nav-icon-mobile"></i>
-                <span class="nav-label-mobile">Events</span>
-            </div>
-            <div class="nav-item-mobile" onclick="showPage('notifications')">
-                <div style="position: relative;">
-                    <i class="fas fa-bell nav-icon-mobile"></i>
-                    <span class="nav-badge-mobile" id="notificationBadge">3</span>
+        <div class="dashboard-sidebar">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Quick Actions</h2>
                 </div>
-                <span class="nav-label-mobile">Alerts</span>
+                <div class="quick-actions">
+                    <div class="quick-action" id="action-template">
+                        <div class="quick-action-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 0H2C0.89543 0 0 0.89543 0 2V14C0 15.1046 0.89543 16 2 16H14C15.1046 16 16 15.1046 16 14V2C16 0.89543 15.1046 0 14 0ZM2 1H14C14.5523 1 15 1.44772 15 2V3H1V2C1 1.44772 1.44772 1 2 1ZM1 14V5H15V14C15 14.5523 14.5523 15 14 15H2C1.44772 15 1 14.5523 1 14Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="quick-action-label">Templates</div>
+                    </div>
+                    <div class="quick-action" id="action-history">
+                        <div class="quick-action-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM7.5 3V8.5H12V7.5H8.5V3H7.5Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="quick-action-label">History</div>
+                    </div>
+                    <div class="quick-action" id="action-export">
+                        <div class="quick-action-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM7.5 3V8.5H12V7.5H8.5V3H7.5Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="quick-action-label">Export</div>
+                    </div>
+                    <div class="quick-action" id="action-settings">
+                        <div class="quick-action-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM7.5 3V8.5H12V7.5H8.5V3H7.5Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="quick-action-label">Settings</div>
+                    </div>
+                </div>
             </div>
-            <div class="nav-item-mobile" onclick="showPage('profile')">
-                <i class="fas fa-user nav-icon-mobile"></i>
-                <span class="nav-label-mobile">Profile</span>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">System Logs</h2>
+                    <button class="btn btn-outline" id="clear-logs">Clear</button>
+                </div>
+                <div class="logs-container" id="system-logs">
+                    <div class="log-entry">
+                        <span class="log-time">[12:00:00]</span>
+                        <span class="log-agent">[SYSTEM]</span>
+                        <span class="log-message">AutoFlow AI initialized successfully</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Achievements</h2>
+                </div>
+                <div class="achievements">
+                    <div class="achievement locked" id="first-workflow">
+                        <div class="achievement-icon">1</div>
+                        <span>First Workflow</span>
+                    </div>
+                    <div class="achievement locked" id="five-workflows">
+                        <div class="achievement-icon">5</div>
+                        <span>5 Workflows</span>
+                    </div>
+                    <div class="achievement locked" id="turbo-user">
+                        <div class="achievement-icon">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 0C2.686 0 0 2.686 0 6C0 9.314 2.686 12 6 12C9.314 12 12 9.314 12 6C12 2.686 9.314 0 6 0ZM6 10C3.791 10 2 8.209 2 6C2 3.791 3.791 2 6 2C8.209 2 10 3.791 10 6C10 8.209 8.209 10 6 10Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <span>Turbo User</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="console" id="command-console">
+        <div class="console-header">
+            <div class="console-title">
+                <span>Command Console</span>
+            </div>
+            <div class="console-controls">
+                <div class="console-control minimize"></div>
+                <div class="console-control maximize"></div>
+                <div class="console-control close"></div>
+            </div>
+        </div>
+        <div class="console-body">
+            <div class="console-input">
+                <input type="text" id="goal-input" placeholder="Enter your automation goal (e.g., 'Create a marketing plan for a new product')" autocomplete="off">
+                <button class="btn btn-primary" id="run-goal">Run</button>
+            </div>
+            <div class="console-hint">
+                Press Enter to run • Esc to clear • Try: "Plan a vacation to Japan" or "Create a content calendar"
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast"></div>
-
-    <!-- Sell Item Modal -->
-    <div class="modal" id="sellModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Sell Your Item</h2>
-                <button class="close-modal" onclick="closeModal('sellModal')">&times;</button>
+    <div class="chat-widget">
+        <div class="chat-button" id="chat-toggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z" fill="white"/>
+            </svg>
+        </div>
+        <div class="chat-container" id="chat-container">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z" fill="white"/>
+                    </svg>
+                    <span>AI Assistant</span>
+                </div>
+                <button class="chat-close" id="chat-close">&times;</button>
             </div>
-            <form id="sellForm">
-                <div class="form-group">
-                    <label class="form-label">Item Title</label>
-                    <input type="text" class="form-input" id="itemTitle" placeholder="e.g., Calculus Textbook 2024 Edition" required>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot">
+                    Hello! I'm your AI assistant. How can I help you with AutoFlow AI today?
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Category</label>
-                    <select class="form-select" id="itemCategory" required>
-                        <option value="">Select Category</option>
-                        <option value="books">Textbooks</option>
-                        <option value="notes">Study Notes</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="stationery">Stationery</option>
-                        <option value="clothing">Clothing</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Price ($)</label>
-                    <input type="number" class="form-input" id="itemPrice" placeholder="0" min="0" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Condition</label>
-                    <select class="form-select" id="itemCondition" required>
-                        <option value="">Select Condition</option>
-                        <option value="new">New</option>
-                        <option value="like-new">Like New</option>
-                        <option value="good">Good</option>
-                        <option value="fair">Fair</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-textarea" id="itemDescription" placeholder="Describe your item in detail..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Image URL</label>
-                    <input type="text" class="form-input" id="itemImage" placeholder="https://example.com/image.jpg">
-                </div>
-                <button type="button" class="btn btn-primary btn-block" onclick="handleSellItem()">
-                    <i class="fas fa-upload"></i> List Item for Sale
-                </button>
-            </form>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Type your message...">
+                <button id="chat-send">Send</button>
+            </div>
         </div>
     </div>
 
-    <!-- Edit Profile Modal -->
-    <div class="modal" id="editProfileModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Edit Profile</h2>
-                <button class="close-modal" onclick="closeModal('editProfileModal')">&times;</button>
-            </div>
-            <form id="profileForm">
-                <div class="form-group">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-input" id="profileName" value="Sai Prasad" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-input" id="profileEmail" value="sai.prasad@university.edu" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Major</label>
-                    <input type="text" class="form-input" id="profileMajor" value="Computer Science" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Year</label>
-                    <select class="form-select" id="profileYear" required>
-                        <option value="freshman">Freshman</option>
-                        <option value="sophomore">Sophomore</option>
-                        <option value="junior" selected>Junior</option>
-                        <option value="senior">Senior</option>
-                        <option value="graduate">Graduate</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Bio</label>
-                    <textarea class="form-textarea" id="profileBio">Passionate about technology and entrepreneurship. Always looking for great deals on textbooks and study materials!</textarea>
-                </div>
-                <button type="button" class="btn btn-primary btn-block" onclick="handleProfileUpdate()">
-                    <i class="fas fa-save"></i> Update Profile
-                </button>
-            </form>
-        </div>
+    <div class="notification" id="notification">
+        <div class="notification-icon">!</div>
+        <div class="notification-message">Workflow completed successfully!</div>
     </div>
 
-    <!-- Create Event Modal -->
-    <div class="modal" id="createEventModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Create Event</h2>
-                <button class="close-modal" onclick="closeModal('createEventModal')">&times;</button>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 18C5.582 18 2 14.418 2 10C2 5.582 5.582 2 10 2C14.418 2 18 5.582 18 10C18 14.418 14.418 18 10 18Z" fill="white"/>
+                            <path d="M10 4C6.686 4 4 6.686 4 10C4 13.314 6.686 16 10 16C13.314 16 16 13.314 16 10C16 6.686 13.314 4 10 4ZM10 14C7.791 14 6 12.209 6 10C6 7.791 7.791 6 10 6C12.209 6 14 7.791 14 10C14 12.209 12.209 14 10 14Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <span>AutoFlow AI</span>
+                </div>
+                <p>Advanced multi-agent automation platform running entirely in your browser</p>
+                <div class="footer-links">
+                    <a href="#">Documentation</a>
+                    <a href="#">API Reference</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact Us</a>
+                </div>
+                <p>© 2023 AutoFlow AI. All rights reserved.</p>
             </div>
-            <form id="eventForm">
-                <div class="form-group">
-                    <label class="form-label">Event Title</label>
-                    <input type="text" class="form-input" id="eventTitle" placeholder="e.g., Tech Workshop 2024" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Date</label>
-                    <input type="date" class="form-input" id="eventDate" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Time</label>
-                    <input type="time" class="form-input" id="eventTime" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Location</label>
-                    <input type="text" class="form-input" id="eventLocation" placeholder="e.g., Main Campus Hall" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-textarea" id="eventDescription" placeholder="Describe your event..." required></textarea>
-                </div>
-                <button type="button" class="btn btn-primary btn-block" onclick="handleCreateEvent()">
-                    <i class="fas fa-calendar-plus"></i> Create Event
-                </button>
-            </form>
         </div>
-    </div>
+    </footer>
 
-    <!-- Purchase Modal -->
-    <div class="modal" id="purchaseModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Complete Purchase</h2>
-                <button class="close-modal" onclick="closeModal('purchaseModal')">&times;</button>
-            </div>
-            <div id="purchaseContent">
-                <!-- Purchase details will be loaded here -->
-            </div>
-            <div class="form-group mt-2">
-                <label class="form-label">Select Payment Method</label>
-                <select class="form-select" id="paymentMethod">
-                    <option value="cash">Cash (In Person)</option>
-                    <option value="venmo">Venmo</option>
-                    <option value="paypal">PayPal</option>
-                    <option value="campus">Campus Payment</option>
-                </select>
-            </div>
-            <button type="button" class="btn btn-primary btn-block mt-2" onclick="completePurchase()">
-                <i class="fas fa-shopping-cart"></i> Complete Purchase
-            </button>
-        </div>
-    </div>
-
-    <script>
-        // Enhanced Sample Data with Images
-        let sampleProducts = [
-            {
-                id: 1,
-                title: "Calculus Textbook 2024 Edition",
-                price: 35,
-                category: "books",
-                badge: "Popular",
-                seller: { name: "JS", avatar: "JS" },
-                description: "Latest edition, barely used with no highlights",
-                image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 2,
-                title: "Physics Complete Notes",
-                price: 8,
-                category: "notes",
-                badge: "Digital",
-                seller: { name: "AS", avatar: "AS" },
-                description: "Complete semester notes with diagrams",
-                image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 3,
-                title: "Graphing Calculator",
-                price: 45,
-                category: "electronics",
-                badge: "Bestseller",
-                seller: { name: "MJ", avatar: "MJ" },
-                description: "TI-84 Plus with case and cables",
-                image: "https://m.media-amazon.com/images/I/71Jvd1EWeeL.jpg"
-            },
-            {
-                id: 4,
-                title: "University Hoodie Size L",
-                price: 25,
-                category: "clothing",
-                badge: "New",
-                seller: { name: "TS", avatar: "TS" },
-                description: "Brand new with tags, official campus store",
-                image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            }
-        ];
-
-        let sampleEvents = [
-            {
-                id: 1,
-                title: "Tech Career Fair 2024",
-                day: "25",
-                month: "OCT",
-                location: "Main Campus Hall",
-                time: "10:00 AM - 4:00 PM",
-                description: "Connect with top tech companies and startups",
-                registered: false
-            },
-            {
-                id: 2,
-                title: "Book Exchange Festival",
-                day: "28",
-                month: "OCT",
-                location: "Library Plaza",
-                time: "9:00 AM - 2:00 PM",
-                description: "Buy, sell, and trade textbooks with students",
-                registered: true
-            },
-            {
-                id: 3,
-                title: "Startup Pitch Competition",
-                day: "05",
-                month: "NOV",
-                location: "Business School",
-                time: "2:00 PM - 5:00 PM",
-                description: "Watch students pitch ideas to investors",
-                registered: false
-            }
-        ];
-
-        let sampleNotes = [
-            {
-                id: 1,
-                title: "Calculus I",
-                subject: "Mathematics",
-                chapters: 12,
-                price: 5,
-                rating: 4.8,
-                image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 2,
-                title: "Physics Mechanics",
-                subject: "Physics",
-                chapters: 8,
-                price: 4,
-                rating: 4.6,
-                image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 3,
-                title: "Organic Chemistry",
-                subject: "Chemistry",
-                chapters: 10,
-                price: 6,
-                rating: 4.9,
-                image: "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 4,
-                title: "Data Structures",
-                subject: "Computer Science",
-                chapters: 15,
-                price: 7,
-                rating: 4.7,
-                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            }
-        ];
-
-        let myListings = [
-            {
-                id: 1,
-                title: "Calculus Textbook",
-                price: 35,
-                status: "available",
-                views: 24,
-                image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 2,
-                title: "Physics Notes",
-                price: 8,
-                status: "sold",
-                views: 45,
-                image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 3,
-                title: "Graphing Calculator",
-                price: 45,
-                status: "available",
-                views: 18,
-                image: "https://images.unsplash.com/photo-1558618666-fcd25856cd63?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            }
-        ];
-
-        let savedItems = [
-            {
-                id: 4,
-                title: "Programming Books Bundle",
-                price: 40,
-                category: "books",
-                savedDate: "2024-10-20",
-                image: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            },
-            {
-                id: 5,
-                title: "Scientific Calculator",
-                price: 15,
-                category: "electronics",
-                savedDate: "2024-10-18",
-                image: "https://images.unsplash.com/photo-1583536669170-1fd04889fd6b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-            }
-        ];
-
-        let notifications = [
-            {
-                id: 1,
-                type: "success",
-                title: "Item Sold!",
-                message: "Your Calculus textbook has been purchased by Sarah.",
-                time: "2 hours ago",
-                icon: "fas fa-check-circle",
-                read: false
-            },
-            {
-                id: 2,
-                type: "warning",
-                title: "Event Reminder",
-                message: "Tech Career Fair starts tomorrow at 10 AM.",
-                time: "5 hours ago",
-                icon: "fas fa-calendar-exclamation",
-                read: false
-            },
-            {
-                id: 3,
-                type: "info",
-                title: "New Message",
-                message: "Mike sent you a message about your calculator.",
-                time: "1 day ago",
-                icon: "fas fa-comment-alt",
-                read: false
-            }
-        ];
-
-        let currentProduct = null;
-
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            displayTrendingProducts();
-            displayUpcomingEvents();
-            displayAllEvents();
-            displayNotifications();
-            displayNotes();
-            displayMyListings();
-            displaySavedItems();
-            updateNotificationBadge();
-            
-            // Set current date for event creation
-            const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0];
-            document.getElementById('eventDate').value = formattedDate;
-            
-            // Check screen size and adjust layout
-            checkScreenSize();
-            window.addEventListener('resize', checkScreenSize);
-        });
-
-        // Check screen size and adjust layout
-        function checkScreenSize() {
-            const sidebar = document.getElementById('sidebar');
-            const bottomNav = document.querySelector('.bottom-nav');
-            
-            if (window.innerWidth <= 1024) {
-                // Mobile layout
-                sidebar.classList.remove('active');
-                bottomNav.style.display = 'flex';
-            } else {
-                // Desktop layout
-                sidebar.classList.add('active');
-                bottomNav.style.display = 'none';
-            }
-        }
-
-        // Toggle sidebar for mobile
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-        }
-
-        // Page Navigation
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Remove active class from all nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.nav-item-mobile').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Show selected page
-            document.getElementById(pageId).classList.add('active');
-            
-            // Update active nav item for main pages
-            if (['home', 'events', 'notifications', 'profile'].includes(pageId)) {
-                const navItems = document.querySelectorAll('.nav-item');
-                const mobileNavItems = document.querySelectorAll('.nav-item-mobile');
-                
-                switch(pageId) {
-                    case 'home':
-                        navItems[0].classList.add('active');
-                        mobileNavItems[0].classList.add('active');
-                        break;
-                    case 'events':
-                        navItems[1].classList.add('active');
-                        mobileNavItems[1].classList.add('active');
-                        break;
-                    case 'notifications':
-                        navItems[3].classList.add('active');
-                        mobileNavItems[2].classList.add('active');
-                        break;
-                    case 'profile':
-                        navItems[4].classList.add('active');
-                        mobileNavItems[3].classList.add('active');
-                        break;
-                }
-            }
-            
-            // Close sidebar on mobile after navigation
-            if (window.innerWidth <= 1024) {
-                toggleSidebar();
-            }
-        }
-
-        // Modal Functions
-        function showModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function showSellModal() {
-            showModal('sellModal');
-        }
-
-        function showEditProfileModal() {
-            showModal('editProfileModal');
-        }
-
-        function showCreateEventModal() {
-            showModal('createEventModal');
-        }
-
-        function showMarketplace() {
-            showPage('home');
-        }
-
-        // Search Functionality
-        function handleSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            const searchResults = document.getElementById('searchResults');
-            
-            if (searchTerm.length === 0) {
-                searchResults.classList.remove('active');
-                return;
-            }
-
-            // Search through products, events, and notes
-            const results = [
-                ...sampleProducts.filter(item => 
-                    item.title.toLowerCase().includes(searchTerm) || 
-                    item.description.toLowerCase().includes(searchTerm)
-                ).map(item => ({...item, type: 'product'})),
-                
-                ...sampleEvents.filter(event => 
-                    event.title.toLowerCase().includes(searchTerm) ||
-                    event.description.toLowerCase().includes(searchTerm)
-                ).map(event => ({...event, type: 'event'})),
-                
-                ...sampleNotes.filter(note =>
-                    note.title.toLowerCase().includes(searchTerm) ||
-                    note.subject.toLowerCase().includes(searchTerm)
-                ).map(note => ({...note, type: 'note'}))
-            ];
-
-            displaySearchResults(results);
-            searchResults.classList.add('active');
-        }
-
-        function displaySearchResults(results) {
-            const container = document.getElementById('searchResults');
-            container.innerHTML = '';
-
-            if (results.length === 0) {
-                container.innerHTML = '<div class="search-result-item">No results found</div>';
-                return;
-            }
-
-            results.forEach(item => {
-                const resultItem = document.createElement('div');
-                resultItem.className = 'search-result-item';
-                resultItem.onclick = () => handleSearchResultClick(item);
-                
-                if (item.type === 'product') {
-                    resultItem.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 40px; height: 40px; border-radius: 8px; background-image: url('${item.image}'); background-size: cover; background-position: center;"></div>
-                            <div>
-                                <div style="font-weight: 500;">${item.title}</div>
-                                <div style="color: var(--primary); font-weight: 600;">$${item.price}</div>
-                                <div style="font-size: 0.8rem; color: var(--dark-gray);">Product • ${item.category}</div>
-                            </div>
-                        </div>
-                    `;
-                } else if (item.type === 'event') {
-                    resultItem.innerHTML = `
-                        <div>
-                            <div style="font-weight: 500;">${item.title}</div>
-                            <div style="font-size: 0.8rem; color: var(--dark-gray);">Event • ${item.location}</div>
-                        </div>
-                    `;
-                } else if (item.type === 'note') {
-                    resultItem.innerHTML = `
-                        <div>
-                            <div style="font-weight: 500;">${item.title}</div>
-                            <div style="font-size: 0.8rem; color: var(--dark-gray);">Notes • ${item.subject}</div>
-                        </div>
-                    `;
-                }
-
-                container.appendChild(resultItem);
-            });
-        }
-
-        function handleSearchResultClick(item) {
-            document.getElementById('searchResults').classList.remove('active');
-            document.getElementById('searchInput').value = '';
-
-            if (item.type === 'product') {
-                initiatePurchase(item.id);
-            } else if (item.type === 'event') {
-                showEventDetail(item.id);
-            } else if (item.type === 'note') {
-                showNotesDetail(item.id);
-            }
-        }
-
-        // Event Registration
-        function registerForEvent(eventId) {
-            const event = sampleEvents.find(e => e.id === eventId);
-            if (event) {
-                event.registered = !event.registered;
-                displayAllEvents();
-                displayUpcomingEvents();
-                
-                if (event.registered) {
-                    showToast(`Successfully registered for ${event.title}!`);
-                    // Add notification
-                    notifications.unshift({
-                        id: notifications.length + 1,
-                        type: "success",
-                        title: "Event Registration",
-                        message: `You've registered for ${event.title}`,
-                        time: "Just now",
-                        icon: "fas fa-calendar-check",
-                        read: false
-                    });
-                    displayNotifications();
-                    updateNotificationBadge();
-                } else {
-                    showToast(`Unregistered from ${event.title}`);
-                }
-            }
-        }
-
-        // Display Functions
-        function displayTrendingProducts() {
-            const container = document.getElementById('trendingProducts');
-            container.innerHTML = '';
-            
-            sampleProducts.forEach(product => {
-                const productCard = `
-                    <div class="product-card">
-                        <div class="product-image" style="background-image: url('${product.image}')">
-                            <div class="product-badge">${product.badge}</div>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-title">${product.title}</div>
-                            <div class="product-price">$${product.price}</div>
-                            <div class="product-seller">
-                                <div class="seller-avatar">${product.seller.avatar}</div>
-                                ${product.seller.name}
-                            </div>
-                            <button class="buy-btn" onclick="initiatePurchase(${product.id})">
-                                <i class="fas fa-shopping-cart"></i> Buy Now
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += productCard;
-            });
-        }
-
-        function displayUpcomingEvents() {
-            const container = document.getElementById('upcomingEvents');
-            container.innerHTML = '';
-            
-            sampleEvents.slice(0, 2).forEach(event => {
-                const eventCard = `
-                    <div class="card">
-                        <div class="event-card">
-                            <div class="event-date">
-                                <div class="event-day">${event.day}</div>
-                                <div class="event-month">${event.month}</div>
-                            </div>
-                            <div class="event-details">
-                                <div class="event-title">${event.title}</div>
-                                <div class="event-location">
-                                    <i class="fas fa-map-marker-alt"></i> ${event.location}
-                                </div>
-                                <div class="event-time">${event.time}</div>
-                                <button class="register-btn ${event.registered ? 'registered' : ''}" 
-                                        onclick="event.stopPropagation(); registerForEvent(${event.id})">
-                                    ${event.registered ? 'Registered' : 'Register Now'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += eventCard;
-            });
-        }
-
-        function displayAllEvents() {
-            const container = document.getElementById('allEvents');
-            container.innerHTML = '';
-            
-            sampleEvents.forEach(event => {
-                const eventCard = `
-                    <div class="card">
-                        <div class="event-card">
-                            <div class="event-date">
-                                <div class="event-day">${event.day}</div>
-                                <div class="event-month">${event.month}</div>
-                            </div>
-                            <div class="event-details">
-                                <div class="event-title">${event.title}</div>
-                                <div class="event-location">
-                                    <i class="fas fa-map-marker-alt"></i> ${event.location}
-                                </div>
-                                <div class="event-time">${event.time}</div>
-                                <button class="register-btn ${event.registered ? 'registered' : ''}" 
-                                        onclick="event.stopPropagation(); registerForEvent(${event.id})">
-                                    ${event.registered ? 'Registered' : 'Register Now'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += eventCard;
-            });
-        }
-
-        function displayNotes() {
-            const container = document.getElementById('notesGrid');
-            container.innerHTML = '';
-            
-            sampleNotes.forEach(note => {
-                const noteCard = `
-                    <div class="product-card">
-                        <div class="product-image" style="background-image: url('${note.image}')">
-                            <div class="product-badge">Notes</div>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-title">${note.title}</div>
-                            <div class="product-price">$${note.price}</div>
-                            <div class="product-seller">
-                                <i class="fas fa-star" style="color: var(--warning);"></i>
-                                ${note.rating}
-                            </div>
-                            <button class="buy-btn" onclick="downloadNotes(${note.id})">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += noteCard;
-            });
-        }
-
-        function displayMyListings() {
-            const container = document.getElementById('myListingsContainer');
-            container.innerHTML = '';
-            
-            myListings.forEach(listing => {
-                const listingItem = `
-                    <div class="listing-item">
-                        <div class="listing-image" style="background-image: url('${listing.image}')">
-                            <i class="fas fa-box" style="color: white;"></i>
-                        </div>
-                        <div class="listing-details">
-                            <div class="listing-title">${listing.title}</div>
-                            <div class="listing-price">$${listing.price}</div>
-                            <div class="listing-status ${listing.status === 'available' ? 'status-available' : 'status-sold'}">
-                                ${listing.status === 'available' ? 'Available' : 'Sold'}
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 0.8rem; color: var(--dark-gray);">${listing.views} views</div>
-                            <button class="btn btn-primary" style="margin-top: 0.5rem; padding: 0.5rem 1rem;" 
-                                    onclick="editListing(${listing.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += listingItem;
-            });
-        }
-
-        function displaySavedItems() {
-            const container = document.getElementById('savedItemsGrid');
-            container.innerHTML = '';
-            
-            savedItems.forEach(item => {
-                const savedCard = `
-                    <div class="product-card">
-                        <div class="product-image" style="background-image: url('${item.image}')">
-                            <div class="product-badge">Saved</div>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-title">${item.title}</div>
-                            <div class="product-price">$${item.price}</div>
-                            <div class="product-seller">
-                                <i class="fas fa-calendar"></i>
-                                Saved on ${item.savedDate}
-                            </div>
-                            <button class="buy-btn" onclick="initiatePurchase(${item.id})">
-                                <i class="fas fa-shopping-cart"></i> Buy Now
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += savedCard;
-            });
-        }
-
-        function displayNotifications() {
-            const container = document.getElementById('notificationsList');
-            container.innerHTML = '';
-            
-            notifications.forEach(notification => {
-                const notificationCard = `
-                    <div class="notification-card ${notification.read ? 'read' : ''}" onclick="markNotificationRead(${notification.id})">
-                        <div class="notification-icon ${notification.type}">
-                            <i class="${notification.icon}"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">${notification.title}</div>
-                            <div class="notification-message">${notification.message}</div>
-                            <div class="notification-time">${notification.time}</div>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += notificationCard;
-            });
-        }
-
-        // Buy Product Functionality
-        function initiatePurchase(productId) {
-            const product = sampleProducts.find(p => p.id === productId) || 
-                           savedItems.find(p => p.id === productId);
-            
-            if (product) {
-                currentProduct = product;
-                const content = document.getElementById('purchaseContent');
-                content.innerHTML = `
-                    <div style="display: flex; gap: 1rem; align-items: center;">
-                        <div style="width: 80px; height: 80px; border-radius: 8px; background-image: url('${product.image}'); background-size: cover; background-position: center;"></div>
-                        <div>
-                            <h3 style="margin-bottom: 0.5rem;">${product.title}</h3>
-                            <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary);">$${product.price}</div>
-                            <div style="font-size: 0.9rem; color: var(--dark-gray); margin-top: 0.5rem;">Seller: ${product.seller ? product.seller.name : 'CampusConnect'}</div>
-                        </div>
-                    </div>
-                `;
-                showModal('purchaseModal');
-            }
-        }
-
-        function completePurchase() {
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            if (currentProduct) {
-                showToast(`Purchase completed! You bought ${currentProduct.title} for $${currentProduct.price}. Contact seller for pickup details.`);
-                closeModal('purchaseModal');
-                
-                // Add notification
-                notifications.unshift({
-                    id: notifications.length + 1,
-                    type: "success",
-                    title: "Purchase Successful!",
-                    message: `You bought ${currentProduct.title} for $${currentProduct.price}`,
-                    time: "Just now",
-                    icon: "fas fa-shopping-bag",
-                    read: false
-                });
-                displayNotifications();
-                updateNotificationBadge();
-            }
-        }
-
-        // Toast Notification
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // Sell Item Functionality
-        function handleSellItem() {
-            const title = document.getElementById('itemTitle').value;
-            const category = document.getElementById('itemCategory').value;
-            const price = document.getElementById('itemPrice').value;
-            const condition = document.getElementById('itemCondition').value;
-            const description = document.getElementById('itemDescription').value;
-            const image = document.getElementById('itemImage').value || "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80";
-
-            if (!title || !category || !price || !condition || !description) {
-                showToast('Please fill in all fields!');
-                return;
-            }
-
-            // Create new product
-            const newProduct = {
-                id: sampleProducts.length + 1,
-                title: title,
-                price: parseFloat(price),
-                category: category,
-                badge: "New",
-                seller: { name: "You", avatar: "SP" },
-                description: description,
-                image: image
-            };
-
-            // Add to sample products
-            sampleProducts.unshift(newProduct);
-            
-            // Update display
-            displayTrendingProducts();
-            
-            // Close modal and show success message
-            closeModal('sellModal');
-            showToast('Your item has been listed successfully!');
-            
-            // Reset form
-            document.getElementById('sellForm').reset();
-        }
-
-        // Edit Profile Functionality
-        function handleProfileUpdate() {
-            const name = document.getElementById('profileName').value;
-            const email = document.getElementById('profileEmail').value;
-            const major = document.getElementById('profileMajor').value;
-            const year = document.getElementById('profileYear').value;
-            const bio = document.getElementById('profileBio').value;
-
-            // Update profile display
-            document.querySelector('.profile-name').textContent = name;
-            document.querySelector('.profile-role').textContent = major + ' Student';
-            
-            // Close modal and show success message
-            closeModal('editProfileModal');
-            showToast('Profile updated successfully!');
-        }
-
-        // Create Event Functionality
-        function handleCreateEvent() {
-            const title = document.getElementById('eventTitle').value;
-            const date = document.getElementById('eventDate').value;
-            const time = document.getElementById('eventTime').value;
-            const location = document.getElementById('eventLocation').value;
-            const description = document.getElementById('eventDescription').value;
-
-            if (!title || !date || !time || !location || !description) {
-                showToast('Please fill in all fields!');
-                return;
-            }
-
-            // Parse date for display
-            const eventDate = new Date(date);
-            const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-            const day = eventDate.getDate();
-            const month = months[eventDate.getMonth()];
-
-            // Create new event
-            const newEvent = {
-                id: sampleEvents.length + 1,
-                title: title,
-                day: day.toString(),
-                month: month,
-                location: location,
-                time: time,
-                description: description,
-                registered: false
-            };
-
-            // Add to sample events
-            sampleEvents.unshift(newEvent);
-            
-            // Update display
-            displayUpcomingEvents();
-            displayAllEvents();
-            
-            // Close modal and show success message
-            closeModal('createEventModal');
-            showToast('Event created successfully!');
-            
-            // Reset form
-            document.getElementById('eventForm').reset();
-        }
-
-        // Notes Download Functionality
-        function downloadNotes(noteId) {
-            const note = sampleNotes.find(n => n.id === noteId);
-            if (note) {
-                showToast(`Downloading "${note.title}" notes...`);
-            }
-        }
-
-        // Notification Functions
-        function markNotificationRead(notificationId) {
-            const notification = notifications.find(n => n.id === notificationId);
-            if (notification && !notification.read) {
-                notification.read = true;
-                displayNotifications();
-                updateNotificationBadge();
-            }
-        }
-
-        function markAllNotificationsRead() {
-            notifications.forEach(notification => {
-                notification.read = true;
-            });
-            displayNotifications();
-            updateNotificationBadge();
-            showToast('All notifications marked as read');
-        }
-
-        function updateNotificationBadge() {
-            const unreadCount = notifications.filter(n => !n.read).length;
-            const badge = document.getElementById('notificationBadge');
-            const sidebarBadge = document.getElementById('sidebarNotificationBadge');
-            
-            if (unreadCount > 0) {
-                badge.textContent = unreadCount;
-                badge.style.display = 'flex';
-                sidebarBadge.textContent = unreadCount;
-                sidebarBadge.style.display = 'flex';
-            } else {
-                badge.style.display = 'none';
-                sidebarBadge.style.display = 'none';
-            }
-        }
-
-        // Helper Functions
-        function getProductIcon(category) {
-            const icons = {
-                'books': 'book',
-                'notes': 'file-alt',
-                'electronics': 'laptop',
-                'clothing': 'tshirt'
-            };
-            return icons[category] || 'box';
-        }
-
-        // Placeholder Functions for Detailed Views
-        function showProductDetail(productId) {
-            const product = sampleProducts.find(p => p.id === productId);
-            if (product) {
-                alert(`Product Details:\n\nTitle: ${product.title}\nPrice: $${product.price}\nCategory: ${product.category}\nDescription: ${product.description}\nSeller: ${product.seller.name}`);
-            }
-        }
-
-        function showEventDetail(eventId) {
-            const event = sampleEvents.find(e => e.id === eventId);
-            if (event) {
-                alert(`Event Details:\n\nTitle: ${event.title}\nDate: ${event.day} ${event.month}\nTime: ${event.time}\nLocation: ${event.location}\nDescription: ${event.description}`);
-            }
-        }
-
-        function showNotesDetail(noteId) {
-            const note = sampleNotes.find(n => n.id === noteId);
-            if (note) {
-                alert(`Notes Details:\n\nTitle: ${note.title}\nSubject: ${note.subject}\nChapters: ${note.chapters}\nPrice: $${note.price}\nRating: ${note.rating}/5.0`);
-            }
-        }
-
-        function editListing(listingId) {
-            const listing = myListings.find(l => l.id === listingId);
-            if (listing) {
-                showToast(`Editing listing: ${listing.title}`);
-            }
-        }
-
-        function showUploadNotesModal() {
-            showToast('Upload Notes feature coming soon!');
-        }
-
-        function showRatingsModal() {
-            showToast('Ratings and reviews feature coming soon!');
-        }
-
-        function showSettingsModal() {
-            showToast('Settings feature coming soon!');
-        }
-
-        function showFAQAnswer(faqId) {
-            const answers = {
-                1: "To sell an item:\n1. Click the 'Sell' button\n2. Fill in item details\n3. Set your price\n4. Upload photos\n5. Publish your listing",
-                2: "To contact a seller:\n1. Click on the item\n2. Click 'Contact Seller'\n3. Send your message\n4. Wait for response",
-                3: "We accept:\n- Cash (in-person)\n- Venmo\n- PayPal\n- Campus payment system",
-                4: "To report an issue:\n1. Go to Help & Support\n2. Contact our team\n3. Describe the issue\n4. We'll respond within 24 hours"
-            };
-            alert(answers[faqId] || "FAQ answer not found.");
-        }
-
-        function contactSupport() {
-            showToast('Support contact form coming soon!');
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
-        }
-
-        // Close search results when clicking outside
-        document.addEventListener('click', function(event) {
-            const searchResults = document.getElementById('searchResults');
-            const searchInput = document.getElementById('searchInput');
-            
-            if (!searchResults.contains(event.target) && event.target !== searchInput) {
-                searchResults.classList.remove('active');
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
