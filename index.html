@@ -3,388 +3,457 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoFlow AI Web Edition</title>
+    <title>CampusConnect - Student Marketplace</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
+    <div class="app-container">
+        <!-- Sidebar for Desktop -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-university"></i>
+                <span>CampusConnect</span>
+            </div>
+            
+            <div class="sidebar-nav">
+                <div class="nav-item active" onclick="showPage('home')">
+                    <i class="fas fa-home nav-icon"></i>
+                    <span class="nav-label">Home</span>
+                </div>
+                <div class="nav-item" onclick="showPage('events')">
+                    <i class="fas fa-calendar-alt nav-icon"></i>
+                    <span class="nav-label">Events</span>
+                </div>
+                <div class="nav-item" onclick="showPage('notes')">
+                    <i class="fas fa-file-alt nav-icon"></i>
+                    <span class="nav-label">Study Notes</span>
+                </div>
+                <div class="nav-item" onclick="showPage('notifications')">
+                    <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
+                        <i class="fas fa-bell nav-icon"></i>
+                        <span class="nav-label">Notifications</span>
+                        <span class="nav-badge" id="sidebarNotificationBadge">3</span>
+                    </div>
+                </div>
+                <div class="nav-item" onclick="showPage('profile')">
+                    <i class="fas fa-user nav-icon"></i>
+                    <span class="nav-label">Profile</span>
+                </div>
+                <div class="nav-item" onclick="showPage('myListings')">
+                    <i class="fas fa-shopping-bag nav-icon"></i>
+                    <span class="nav-label">My Listings</span>
+                </div>
+                <div class="nav-item" onclick="showPage('savedItems')">
+                    <i class="fas fa-heart nav-icon"></i>
+                    <span class="nav-label">Saved Items</span>
+                </div>
+                <div class="nav-item" onclick="showPage('helpSupport')">
+                    <i class="fas fa-question-circle nav-icon"></i>
+                    <span class="nav-label">Help & Support</span>
+                </div>
+                <div class="nav-item" onclick="showSellModal()">
+                    <i class="fas fa-tag nav-icon"></i>
+                    <span class="nav-label">Sell Item</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="logo">
-                    <div class="logo-icon">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 18C5.582 18 2 14.418 2 10C2 5.582 5.582 2 10 2C14.418 2 18 5.582 18 10C18 14.418 14.418 18 10 18Z" fill="white"/>
-                            <path d="M10 4C6.686 4 4 6.686 4 10C4 13.314 6.686 16 10 16C13.314 16 16 13.314 16 10C16 6.686 13.314 4 10 4ZM10 14C7.791 14 6 12.209 6 10C6 7.791 7.791 6 10 6C12.209 6 14 7.791 14 10C14 12.209 12.209 14 10 14Z" fill="white"/>
-                        </svg>
+                    <i class="fas fa-university"></i>
+                    <span>CampusConnect</span>
+                </div>
+                <div style="width: 40px;"></div>
+            </div>
+
+            <!-- Desktop Header -->
+            <div class="header">
+                <div class="header-content">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search for books, notes, events..." onkeyup="handleSearch()">
                     </div>
-                    <span>AutoFlow AI</span>
+                    
+                    <div class="search-results" id="searchResults"></div>
                 </div>
                 
-                <button class="mobile-menu-btn" id="mobile-menu-toggle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="currentColor"/>
-                    </svg>
-                </button>
-                
-                <nav>
-                    <ul>
-                        <li><a href="#dashboard" class="active">Dashboard</a></li>
-                        <li><a href="#workflows">Workflows</a></li>
-                        <li><a href="#agents">Agents</a></li>
-                        <li><a href="#analytics">Analytics</a></li>
-                        <li><a href="#settings">Settings</a></li>
-                    </ul>
-                </nav>
-                
-                <div class="header-actions">
-                    <button class="btn btn-ghost tooltip" data-tooltip="Search (Ctrl+K)">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.7422 10.3439C12.5329 9.2673 13 7.9382 13 6.5C13 2.91015 10.0899 0 6.5 0C2.91015 0 0 2.91015 0 6.5C0 10.0899 2.91015 13 6.5 13C7.93858 13 9.26801 12.5327 10.3448 11.7415L10.3439 11.7422C10.3734 11.7822 10.4062 11.8204 10.4424 11.8566L14.2929 15.7071C14.6834 16.0976 15.3166 16.0976 15.7071 15.7071C16.0976 15.3166 16.0976 14.6834 15.7071 14.2929L11.8566 10.4424C11.8204 10.4062 11.7822 10.3734 11.7422 10.3439ZM12 6.5C12 9.53757 9.53757 12 6.5 12C3.46243 12 1 9.53757 1 6.5C1 3.46243 3.46243 1 6.5 1C9.53757 1 12 3.46243 12 6.5Z" fill="currentColor"/>
-                        </svg>
+                <div class="user-actions">
+                    <button class="user-action-btn" onclick="showSellModal()">
+                        <i class="fas fa-tag"></i> Sell Item
                     </button>
-                    <button class="btn btn-ghost tooltip" data-tooltip="Notifications">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 0C6.89543 0 6 0.89543 6 2V2.5C3.79086 2.5 2 4.29086 2 6.5V10.5L0 12.5V13H16V12.5L14 10.5V6.5C14 4.29086 12.2091 2.5 10 2.5V2C10 0.89543 9.10457 0 8 0ZM8 1C8.55228 1 9 1.44772 9 2V2.5H7V2C7 1.44772 7.44772 1 8 1ZM4 14C4 15.1046 4.89543 16 6 16H10C11.1046 16 12 15.1046 12 14H4Z" fill="currentColor"/>
-                        </svg>
-                    </button>
-                    <button class="btn btn-outline" id="theme-toggle">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15V1Z" fill="currentColor"/>
-                        </svg>
-                        <span>Dark Mode</span>
-                    </button>
-                    <button class="btn btn-primary" id="new-workflow">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 1C7 0.447715 7.44772 0 8 0C8.55228 0 9 0.447715 9 1V7H15C15.5523 7 16 7.44772 16 8C16 8.55228 15.5523 9 15 9H9V15C9 15.5523 8.55228 16 8 16C7.44772 16 7 15.5523 7 15V9H1C0.447715 9 0 8.55228 0 8C0 7.44772 0.447715 7 1 7H7V1Z" fill="currentColor"/>
-                        </svg>
-                        <span>New Workflow</span>
+                    <button class="user-action-btn" onclick="showCreateEventModal()">
+                        <i class="fas fa-calendar-plus"></i> Create Event
                     </button>
                 </div>
             </div>
-        </div>
-    </header>
 
-    <div class="mobile-menu" id="mobile-menu">
-        <div class="mobile-nav">
-            <a href="#dashboard" class="active">Dashboard</a>
-            <a href="#workflows">Workflows</a>
-            <a href="#agents">Agents</a>
-            <a href="#analytics">Analytics</a>
-            <a href="#settings">Settings</a>
-        </div>
-    </div>
-
-    <section class="hero">
-        <div class="container">
-            <h1>Intelligent Automation with Multi-Agent AI</h1>
-            <p>AutoFlow AI Web Edition simulates a team of specialized AI agents working together to accomplish your goals. No backend required - everything runs in your browser.</p>
-            <div class="hero-actions">
-                <button class="btn btn-primary" id="try-demo">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM6 11.5L2.5 8L3.91421 6.58579L6 8.67157L12.0858 2.58579L13.5 4L6 11.5Z" fill="currentColor"/>
-                    </svg>
-                    <span>Try Demo</span>
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="action-btn" onclick="showMarketplace()">
+                    <i class="fas fa-shopping-cart"></i> Buy
                 </button>
-                <button class="btn btn-outline" id="learn-more">
-                    <span>Learn More</span>
+                <button class="action-btn" onclick="showSellModal()">
+                    <i class="fas fa-tag"></i> Sell
+                </button>
+                <button class="action-btn" onclick="showPage('events')">
+                    <i class="fas fa-calendar-alt"></i> Events
+                </button>
+                <button class="action-btn" onclick="showPage('notes')">
+                    <i class="fas fa-file-alt"></i> Notes
+                </button>
+                <button class="action-btn" onclick="showPage('notifications')">
+                    <i class="fas fa-bell"></i> Notifications
                 </button>
             </div>
-            <div class="hero-features">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="white"/>
-                            <path d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6ZM12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16Z" fill="white"/>
-                        </svg>
-                    </div>
-                    <h3>Multi-Agent</h3>
-                    <p>5 specialized AI agents working in harmony</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M13 2.05C18.05 2.55 22 6.81 22 12C22 17.52 17.52 22 12 22C6.81 22 2.55 18.05 2.05 13H11V2.05Z" fill="white"/>
-                        </svg>
-                    </div>
-                    <h3>Fast Execution</h3>
-                    <p>Real-time simulation with optimized performance</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM12 11H19C18.47 15.93 15.61 20.19 12 21.88C8.39 20.19 5.53 15.93 5 11H12Z" fill="white"/>
-                        </svg>
-                    </div>
-                    <h3>Private & Secure</h3>
-                    <p>Runs entirely offline in your browser</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <section class="dashboard container" id="dashboard">
-        <div class="dashboard-main">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Overview</h2>
-                    <div class="badge">Live</div>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">24</div>
-                        <div class="stat-label">Workflows Completed</div>
+            <!-- Content Pages -->
+            <div class="main-content-pages">
+                <!-- Home Page -->
+                <div id="home" class="page active">
+                    <div class="section-header">
+                        <h2 class="section-title">Trending Items</h2>
+                        <a class="see-all" onclick="showMarketplace()">See All</a>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">98%</div>
-                        <div class="stat-label">Success Rate</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">3.2m</div>
-                        <div class="stat-label">Avg. Duration</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">5/5</div>
-                        <div class="stat-label">Agents Active</div>
-                    </div>
-                </div>
-            </div>
+                    
+                    <div class="products-grid" id="trendingProducts"></div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Agent Activity</h2>
-                    <div class="agent-bubbles">
-                        <div class="agent-bubble" id="planner-bubble">
-                            <div class="status"></div>
-                            <span>Planner</span>
+                    <div class="section-header">
+                        <h2 class="section-title">Upcoming Events</h2>
+                        <a class="see-all" onclick="showPage('events')">See All</a>
+                    </div>
+                    
+                    <div class="events-list" id="upcomingEvents"></div>
+                </div>
+
+                <!-- Events Page -->
+                <div id="events" class="page">
+                    <div class="section-header">
+                        <h2 class="section-title">College Events</h2>
+                        <a class="see-all" onclick="showCreateEventModal()">Create Event</a>
+                    </div>
+                    
+                    <div class="events-list" id="allEvents"></div>
+                </div>
+
+                <!-- Notes Page -->
+                <div id="notes" class="page">
+                    <div class="section-header">
+                        <h2 class="section-title">Study Notes</h2>
+                        <a class="see-all" onclick="showUploadNotesModal()">Upload Notes</a>
+                    </div>
+                    
+                    <div class="notes-grid" id="notesGrid"></div>
+                </div>
+
+                <!-- Notifications Page -->
+                <div id="notifications" class="page">
+                    <div class="section-header">
+                        <h2 class="section-title">Notifications</h2>
+                        <a class="see-all" onclick="markAllNotificationsRead()">Mark All Read</a>
+                    </div>
+                    
+                    <div class="notifications-list" id="notificationsList"></div>
+                </div>
+
+                <!-- Profile Page -->
+                <div id="profile" class="page">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
                         </div>
-                        <div class="agent-bubble" id="executor-bubble">
-                            <div class="status"></div>
-                            <span>Executor</span>
+                        <h1 class="profile-name">Sai Prasad</h1>
+                        <p class="profile-role">Computer Science Student</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item" onclick="showPage('myListings')">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Listings</div>
                         </div>
-                        <div class="agent-bubble" id="qa-bubble">
-                            <div class="status"></div>
-                            <span>QA</span>
+                        <div class="stat-item" onclick="showPage('soldItems')">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Sold</div>
                         </div>
-                        <div class="agent-bubble" id="memory-bubble">
-                            <div class="status"></div>
-                            <span>Memory</span>
-                        </div>
-                        <div class="agent-bubble" id="report-bubble">
-                            <div class="status"></div>
-                            <span>Report</span>
+                        <div class="stat-item" onclick="showRatingsModal()">
+                            <div class="stat-value">4.8</div>
+                            <div class="stat-label">Rating</div>
                         </div>
                     </div>
-                </div>
-                <div class="activity-feed" id="activity-feed">
-                    <div class="activity-item">
-                        <div class="activity-avatar" style="background-color: #1a73e8;">P</div>
-                        <div class="activity-content">
-                            <div class="activity-header">
-                                <span class="activity-agent">Planner Agent</span>
-                                <span class="activity-time">Just now</span>
+                    
+                    <div class="profile-menu">
+                        <div class="menu-item" onclick="showEditProfileModal()">
+                            <div class="menu-icon">
+                                <i class="fas fa-user-edit"></i>
                             </div>
-                            <div class="activity-message">
-                                Ready to break down your goals into actionable tasks.
+                            <div class="menu-text">Edit Profile</div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="menu-item" onclick="showPage('myListings')">
+                            <div class="menu-icon">
+                                <i class="fas fa-shopping-bag"></i>
                             </div>
+                            <div class="menu-text">My Listings</div>
+                            <i class="fas fa-chevron-right"></i>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Task Timeline</h2>
-                    <button class="btn btn-outline" id="export-timeline">Export JSON</button>
-                </div>
-                <div class="timeline" id="task-timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="timeline-header">
-                                <span class="timeline-title">Waiting for input</span>
-                                <span class="timeline-status">Idle</span>
+                        <div class="menu-item" onclick="showPage('savedItems')">
+                            <div class="menu-icon">
+                                <i class="fas fa-heart"></i>
                             </div>
-                            <p class="timeline-desc">Enter a goal in the command console to begin automation.</p>
+                            <div class="menu-text">Saved Items</div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="menu-item" onclick="showSettingsModal()">
+                            <div class="menu-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="menu-text">Settings</div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="menu-item" onclick="showPage('helpSupport')">
+                            <div class="menu-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div class="menu-text">Help & Support</div>
+                            <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Workflow Progress</h2>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
+                <!-- My Listings Page -->
+                <div id="myListings" class="page">
+                    <div class="section-header">
+                        <h2 class="section-title">My Listings</h2>
+                        <a class="see-all" onclick="showPage('profile')">Back to Profile</a>
                     </div>
-                    <div class="progress-text">
-                        <span>Current Task: <span id="current-task">None</span></span>
-                        <span><span id="progress-percent">0</span>% Complete</span>
+                    
+                    <div id="myListingsContainer"></div>
+                </div>
+
+                <!-- Saved Items Page -->
+                <div id="savedItems" class="page">
+                    <div class="section-header">
+                        <h2 class="section-title">Saved Items</h2>
+                        <a class="see-all" onclick="showPage('profile')">Back to Profile</a>
+                    </div>
+                    
+                    <div class="saved-items-grid" id="savedItemsGrid"></div>
+                </div>
+
+                <!-- Help & Support Page -->
+                <div id="helpSupport" class="page">
+                    <div class="section-header">
+                        <h2 class="section-title">Help & Support</h2>
+                        <a class="see-all" onclick="showPage('profile')">Back to Profile</a>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h3 class="mb-1">Frequently Asked Questions</h3>
+                        <div class="help-item" onclick="showFAQAnswer(1)">How do I sell an item?</div>
+                        <div class="help-item" onclick="showFAQAnswer(2)">How do I contact a seller?</div>
+                        <div class="help-item" onclick="showFAQAnswer(3)">What payment methods are accepted?</div>
+                        <div class="help-item" onclick="showFAQAnswer(4)">How do I report an issue?</div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3 class="mb-1">Contact Support</h3>
+                        <div class="card">
+                            <p><strong>Email:</strong> support@campusconnect.edu</p>
+                            <p><strong>Phone:</strong> (555) 123-4567</p>
+                            <p><strong>Office Hours:</strong> Mon-Fri, 9AM-5PM</p>
+                            <button class="btn btn-primary mt-1" onclick="contactSupport()">
+                                <i class="fas fa-envelope"></i> Send Message
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="dashboard-sidebar">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Quick Actions</h2>
-                </div>
-                <div class="quick-actions">
-                    <div class="quick-action" id="action-template">
-                        <div class="quick-action-icon">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M14 0H2C0.89543 0 0 0.89543 0 2V14C0 15.1046 0.89543 16 2 16H14C15.1046 16 16 15.1046 16 14V2C16 0.89543 15.1046 0 14 0ZM2 1H14C14.5523 1 15 1.44772 15 2V3H1V2C1 1.44772 1.44772 1 2 1ZM1 14V5H15V14C15 14.5523 14.5523 15 14 15H2C1.44772 15 1 14.5523 1 14Z" fill="white"/>
-                            </svg>
-                        </div>
-                        <div class="quick-action-label">Templates</div>
-                    </div>
-                    <div class="quick-action" id="action-history">
-                        <div class="quick-action-icon">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM7.5 3V8.5H12V7.5H8.5V3H7.5Z" fill="white"/>
-                            </svg>
-                        </div>
-                        <div class="quick-action-label">History</div>
-                    </div>
-                    <div class="quick-action" id="action-export">
-                        <div class="quick-action-icon">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM7.5 3V8.5H12V7.5H8.5V3H7.5Z" fill="white"/>
-                            </svg>
-                        </div>
-                        <div class="quick-action-label">Export</div>
-                    </div>
-                    <div class="quick-action" id="action-settings">
-                        <div class="quick-action-icon">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM7.5 3V8.5H12V7.5H8.5V3H7.5Z" fill="white"/>
-                            </svg>
-                        </div>
-                        <div class="quick-action-label">Settings</div>
-                    </div>
-                </div>
+        <!-- Bottom Navigation for Mobile -->
+        <div class="bottom-nav">
+            <div class="nav-item-mobile active" onclick="showPage('home')">
+                <i class="fas fa-home nav-icon-mobile"></i>
+                <span class="nav-label-mobile">Home</span>
             </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">System Logs</h2>
-                    <button class="btn btn-outline" id="clear-logs">Clear</button>
+            <div class="nav-item-mobile" onclick="showPage('events')">
+                <i class="fas fa-calendar-alt nav-icon-mobile"></i>
+                <span class="nav-label-mobile">Events</span>
+            </div>
+            <div class="nav-item-mobile" onclick="showPage('notifications')">
+                <div style="position: relative;">
+                    <i class="fas fa-bell nav-icon-mobile"></i>
+                    <span class="nav-badge-mobile" id="notificationBadge">3</span>
                 </div>
-                <div class="logs-container" id="system-logs">
-                    <div class="log-entry">
-                        <span class="log-time">[12:00:00]</span>
-                        <span class="log-agent">[SYSTEM]</span>
-                        <span class="log-message">AutoFlow AI initialized successfully</span>
-                    </div>
-                </div>
+                <span class="nav-label-mobile">Alerts</span>
             </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Achievements</h2>
-                </div>
-                <div class="achievements">
-                    <div class="achievement locked" id="first-workflow">
-                        <div class="achievement-icon">1</div>
-                        <span>First Workflow</span>
-                    </div>
-                    <div class="achievement locked" id="five-workflows">
-                        <div class="achievement-icon">5</div>
-                        <span>5 Workflows</span>
-                    </div>
-                    <div class="achievement locked" id="turbo-user">
-                        <div class="achievement-icon">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 0C2.686 0 0 2.686 0 6C0 9.314 2.686 12 6 12C9.314 12 12 9.314 12 6C12 2.686 9.314 0 6 0ZM6 10C3.791 10 2 8.209 2 6C2 3.791 3.791 2 6 2C8.209 2 10 3.791 10 6C10 8.209 8.209 10 6 10Z" fill="white"/>
-                            </svg>
-                        </div>
-                        <span>Turbo User</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="console" id="command-console">
-        <div class="console-header">
-            <div class="console-title">
-                <span>Command Console</span>
-            </div>
-            <div class="console-controls">
-                <div class="console-control minimize"></div>
-                <div class="console-control maximize"></div>
-                <div class="console-control close"></div>
-            </div>
-        </div>
-        <div class="console-body">
-            <div class="console-input">
-                <input type="text" id="goal-input" placeholder="Enter your automation goal (e.g., 'Create a marketing plan for a new product')" autocomplete="off">
-                <button class="btn btn-primary" id="run-goal">Run</button>
-            </div>
-            <div class="console-hint">
-                Press Enter to run • Esc to clear • Try: "Plan a vacation to Japan" or "Create a content calendar"
+            <div class="nav-item-mobile" onclick="showPage('profile')">
+                <i class="fas fa-user nav-icon-mobile"></i>
+                <span class="nav-label-mobile">Profile</span>
             </div>
         </div>
     </div>
 
-    <div class="chat-widget">
-        <div class="chat-button" id="chat-toggle">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z" fill="white"/>
-            </svg>
-        </div>
-        <div class="chat-container" id="chat-container">
-            <div class="chat-header">
-                <div class="chat-title">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z" fill="white"/>
-                    </svg>
-                    <span>AI Assistant</span>
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Sell Item Modal -->
+    <div class="modal" id="sellModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Sell Your Item</h2>
+                <button class="close-modal" onclick="closeModal('sellModal')">&times;</button>
+            </div>
+            <form id="sellForm">
+                <div class="form-group">
+                    <label class="form-label">Item Title</label>
+                    <input type="text" class="form-input" id="itemTitle" placeholder="e.g., Calculus Textbook 2024 Edition" required>
                 </div>
-                <button class="chat-close" id="chat-close">&times;</button>
-            </div>
-            <div class="chat-messages" id="chat-messages">
-                <div class="message bot">
-                    Hello! I'm your AI assistant. How can I help you with AutoFlow AI today?
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" id="itemCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="books">Textbooks</option>
+                        <option value="notes">Study Notes</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="stationery">Stationery</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="chat-input" placeholder="Type your message...">
-                <button id="chat-send">Send</button>
-            </div>
+                <div class="form-group">
+                    <label class="form-label">Price ($)</label>
+                    <input type="number" class="form-input" id="itemPrice" placeholder="0" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Condition</label>
+                    <select class="form-select" id="itemCondition" required>
+                        <option value="">Select Condition</option>
+                        <option value="new">New</option>
+                        <option value="like-new">Like New</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="itemDescription" placeholder="Describe your item in detail..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="text" class="form-input" id="itemImage" placeholder="https://example.com/image.jpg">
+                </div>
+                <button type="button" class="btn btn-primary btn-block" onclick="handleSellItem()">
+                    <i class="fas fa-upload"></i> List Item for Sale
+                </button>
+            </form>
         </div>
     </div>
 
-    <div class="notification" id="notification">
-        <div class="notification-icon">!</div>
-        <div class="notification-message">Workflow completed successfully!</div>
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Profile</h2>
+                <button class="close-modal" onclick="closeModal('editProfileModal')">&times;</button>
+            </div>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="profileName" value="Sai Prasad" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="profileEmail" value="sai.prasad@university.edu" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Major</label>
+                    <input type="text" class="form-input" id="profileMajor" value="Computer Science" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Year</label>
+                    <select class="form-select" id="profileYear" required>
+                        <option value="freshman">Freshman</option>
+                        <option value="sophomore">Sophomore</option>
+                        <option value="junior" selected>Junior</option>
+                        <option value="senior">Senior</option>
+                        <option value="graduate">Graduate</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-textarea" id="profileBio">Passionate about technology and entrepreneurship. Always looking for great deals on textbooks and study materials!</textarea>
+                </div>
+                <button type="button" class="btn btn-primary btn-block" onclick="handleProfileUpdate()">
+                    <i class="fas fa-save"></i> Update Profile
+                </button>
+            </form>
+        </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 18C5.582 18 2 14.418 2 10C2 5.582 5.582 2 10 2C14.418 2 18 5.582 18 10C18 14.418 14.418 18 10 18Z" fill="white"/>
-                            <path d="M10 4C6.686 4 4 6.686 4 10C4 13.314 6.686 16 10 16C13.314 16 16 13.314 16 10C16 6.686 13.314 4 10 4ZM10 14C7.791 14 6 12.209 6 10C6 7.791 7.791 6 10 6C12.209 6 14 7.791 14 10C14 12.209 12.209 14 10 14Z" fill="white"/>
-                        </svg>
-                    </div>
-                    <span>AutoFlow AI</span>
-                </div>
-                <p>Advanced multi-agent automation platform running entirely in your browser</p>
-                <div class="footer-links">
-                    <a href="#">Documentation</a>
-                    <a href="#">API Reference</a>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Contact Us</a>
-                </div>
-                <p>© 2023 AutoFlow AI. All rights reserved.</p>
+    <!-- Create Event Modal -->
+    <div class="modal" id="createEventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Event</h2>
+                <button class="close-modal" onclick="closeModal('createEventModal')">&times;</button>
             </div>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label class="form-label">Event Title</label>
+                    <input type="text" class="form-input" id="eventTitle" placeholder="e.g., Tech Workshop 2024" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-input" id="eventDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Time</label>
+                    <input type="time" class="form-input" id="eventTime" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-input" id="eventLocation" placeholder="e.g., Main Campus Hall" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="eventDescription" placeholder="Describe your event..." required></textarea>
+                </div>
+                <button type="button" class="btn btn-primary btn-block" onclick="handleCreateEvent()">
+                    <i class="fas fa-calendar-plus"></i> Create Event
+                </button>
+            </form>
         </div>
-    </footer>
+    </div>
+
+    <!-- Purchase Modal -->
+    <div class="modal" id="purchaseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Complete Purchase</h2>
+                <button class="close-modal" onclick="closeModal('purchaseModal')">&times;</button>
+            </div>
+            <div id="purchaseContent"></div>
+            <div class="form-group mt-2">
+                <label class="form-label">Select Payment Method</label>
+                <select class="form-select" id="paymentMethod">
+                    <option value="cash">Cash (In Person)</option>
+                    <option value="venmo">Venmo</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="campus">Campus Payment</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary btn-block mt-2" onclick="completePurchase()">
+                <i class="fas fa-shopping-cart"></i> Complete Purchase
+            </button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
