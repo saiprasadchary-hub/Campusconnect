@@ -1,710 +1,860 @@
-const state = {
-    currentWorkflow: null,
-    workflows: JSON.parse(localStorage.getItem('autoflow-workflows') || '[]'),
-    achievements: JSON.parse(localStorage.getItem('autoflow-achievements') || '{}'),
-    settings: JSON.parse(localStorage.getItem('autoflow-settings') || '{"personality": "professional", "turboMode": false, "soundEffects": true}'),
-    agentColors: {
-        planner: '#1a73e8',
-        executor: '#34a853',
-        qa: '#f9ab00',
-        memory: '#6f42c1',
-        report: '#ea4335'
+let sampleProducts = [
+    {
+        id: 1,
+        title: "Calculus Textbook 2024 Edition",
+        price: 35,
+        category: "books",
+        badge: "Popular",
+        seller: { name: "JS", avatar: "JS" },
+        description: "Latest edition, barely used with no highlights",
+        image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
     },
-    chatOpen: false
-};
+    {
+        id: 2,
+        title: "Physics Complete Notes",
+        price: 8,
+        category: "notes",
+        badge: "Digital",
+        seller: { name: "AS", avatar: "AS" },
+        description: "Complete semester notes with diagrams",
+        image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        id: 3,
+        title: "Graphing Calculator",
+        price: 45,
+        category: "electronics",
+        badge: "Bestseller",
+        seller: { name: "MJ", avatar: "MJ" },
+        description: "TI-84 Plus with case and cables",
+        image: "https://m.media-amazon.com/images/I/71Jvd1EWeeL.jpg"
+    },
+    {
+        id: 4,
+        title: "University Hoodie Size L",
+        price: 25,
+        category: "clothing",
+        badge: "New",
+        seller: { name: "TS", avatar: "TS" },
+        description: "Brand new with tags, official campus store",
+        image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    }
+];
 
-const elements = {
-    activityFeed: document.getElementById('activity-feed'),
-    taskTimeline: document.getElementById('task-timeline'),
-    systemLogs: document.getElementById('system-logs'),
-    goalInput: document.getElementById('goal-input'),
-    runGoal: document.getElementById('run-goal'),
-    progressFill: document.getElementById('progress-fill'),
-    progressPercent: document.getElementById('progress-percent'),
-    currentTask: document.getElementById('current-task'),
-    notification: document.getElementById('notification'),
-    themeToggle: document.getElementById('theme-toggle'),
-    commandConsole: document.getElementById('command-console'),
-    exportTimeline: document.getElementById('export-timeline'),
-    clearLogs: document.getElementById('clear-logs'),
-    tryDemo: document.getElementById('try-demo'),
-    newWorkflow: document.getElementById('new-workflow'),
-    chatToggle: document.getElementById('chat-toggle'),
-    chatContainer: document.getElementById('chat-container'),
-    chatClose: document.getElementById('chat-close'),
-    chatMessages: document.getElementById('chat-messages'),
-    chatInput: document.getElementById('chat-input'),
-    chatSend: document.getElementById('chat-send')
-};
+let sampleEvents = [
+    {
+        id: 1,
+        title: "Tech Career Fair 2024",
+        day: "25",
+        month: "OCT",
+        location: "Main Campus Hall",
+        time: "10:00 AM - 4:00 PM",
+        description: "Connect with top tech companies and startups",
+        registered: false
+    },
+    {
+        id: 2,
+        title: "Book Exchange Festival",
+        day: "28",
+        month: "OCT",
+        location: "Library Plaza",
+        time: "9:00 AM - 2:00 PM",
+        description: "Buy, sell, and trade textbooks with students",
+        registered: true
+    },
+    {
+        id: 3,
+        title: "Startup Pitch Competition",
+        day: "05",
+        month: "NOV",
+        location: "Business School",
+        time: "2:00 PM - 5:00 PM",
+        description: "Watch students pitch ideas to investors",
+        registered: false
+    }
+];
 
-function init() {
-    setupEventListeners();
-    updateAchievements();
-    addLogEntry('SYSTEM', 'AutoFlow AI initialized successfully');
+let sampleNotes = [
+    {
+        id: 1,
+        title: "Calculus I",
+        subject: "Mathematics",
+        chapters: 12,
+        price: 5,
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        id: 2,
+        title: "Physics Mechanics",
+        subject: "Physics",
+        chapters: 8,
+        price: 4,
+        rating: 4.6,
+        image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        id: 3,
+        title: "Organic Chemistry",
+        subject: "Chemistry",
+        chapters: 10,
+        price: 6,
+        rating: 4.9,
+        image: "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        id: 4,
+        title: "Data Structures",
+        subject: "Computer Science",
+        chapters: 15,
+        price: 7,
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    }
+];
+
+let myListings = [
+    {
+        id: 1,
+        title: "Calculus Textbook",
+        price: 35,
+        status: "available",
+        views: 24,
+        image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        id: 2,
+        title: "Physics Notes",
+        price: 8,
+        status: "sold",
+        views: 45,
+        image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        id: 3,
+        title: "Graphing Calculator",
+        price: 45,
+        status: "available",
+        views: 18,
+        image: "https://images.unsplash.com/photo-1558618666-fcd25856cd63?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    }
+];
+
+let savedItems = [
+    {
+        id: 4,
+        title: "Programming Books Bundle",
+        price: 40,
+        category: "books",
+        savedDate: "2024-10-20",
+        image: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    },
+    {
+        id: 5,
+        title: "Scientific Calculator",
+        price: 15,
+        category: "electronics",
+        savedDate: "2024-10-18",
+        image: "https://images.unsplash.com/photo-1583536669170-1fd04889fd6b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+    }
+];
+
+let notifications = [
+    {
+        id: 1,
+        type: "success",
+        title: "Item Sold!",
+        message: "Your Calculus textbook has been purchased by Sarah.",
+        time: "2 hours ago",
+        icon: "fas fa-check-circle",
+        read: false
+    },
+    {
+        id: 2,
+        type: "warning",
+        title: "Event Reminder",
+        message: "Tech Career Fair starts tomorrow at 10 AM.",
+        time: "5 hours ago",
+        icon: "fas fa-calendar-exclamation",
+        read: false
+    },
+    {
+        id: 3,
+        type: "info",
+        title: "New Message",
+        message: "Mike sent you a message about your calculator.",
+        time: "1 day ago",
+        icon: "fas fa-comment-alt",
+        read: false
+    }
+];
+
+let currentProduct = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    displayTrendingProducts();
+    displayUpcomingEvents();
+    displayAllEvents();
+    displayNotifications();
+    displayNotes();
+    displayMyListings();
+    displaySavedItems();
+    updateNotificationBadge();
     
-    makeDraggable(elements.commandConsole);
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+    document.getElementById('eventDate').value = formattedDate;
     
-    if (state.workflows.length === 0) {
-        loadSampleWorkflows();
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+});
+
+function checkScreenSize() {
+    const sidebar = document.getElementById('sidebar');
+    const bottomNav = document.querySelector('.bottom-nav');
+    
+    if (window.innerWidth <= 1024) {
+        sidebar.classList.remove('active');
+        bottomNav.style.display = 'flex';
+    } else {
+        sidebar.classList.add('active');
+        bottomNav.style.display = 'none';
     }
 }
 
-function setupEventListeners() {
-    elements.runGoal.addEventListener('click', runWorkflow);
-    elements.goalInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') runWorkflow();
-        if (e.key === 'Escape') clearInput();
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
+}
+
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
     });
     
-    elements.themeToggle.addEventListener('click', toggleTheme);
-    elements.exportTimeline.addEventListener('click', exportWorkflow);
-    elements.clearLogs.addEventListener('click', clearLogs);
-    elements.tryDemo.addEventListener('click', runDemo);
-    elements.newWorkflow.addEventListener('click', () => {
-        elements.goalInput.value = '';
-        elements.goalInput.focus();
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
     });
     
-    elements.chatToggle.addEventListener('click', toggleChat);
-    elements.chatClose.addEventListener('click', toggleChat);
-    elements.chatSend.addEventListener('click', sendChatMessage);
-    elements.chatInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') sendChatMessage();
+    document.querySelectorAll('.nav-item-mobile').forEach(item => {
+        item.classList.remove('active');
     });
     
-    document.getElementById('action-template').addEventListener('click', showTemplates);
-    document.getElementById('action-history').addEventListener('click', showHistory);
-    document.getElementById('action-export').addEventListener('click', exportWorkflow);
-    document.getElementById('action-settings').addEventListener('click', showSettings);
+    document.getElementById(pageId).classList.add('active');
     
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    
-    mobileMenuToggle.addEventListener('click', () => {
-        mobileMenu.classList.toggle('active');
-    });
-    
-    document.addEventListener('click', (e) => {
-        if (!mobileMenu.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
-            mobileMenu.classList.remove('active');
-        }
-    });
-    
-    document.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            elements.goalInput.focus();
-        }
+    if (['home', 'events', 'notifications', 'profile'].includes(pageId)) {
+        const navItems = document.querySelectorAll('.nav-item');
+        const mobileNavItems = document.querySelectorAll('.nav-item-mobile');
         
-        if (e.key === 'Escape' && state.chatOpen) {
-            toggleChat();
+        switch(pageId) {
+            case 'home':
+                navItems[0].classList.add('active');
+                mobileNavItems[0].classList.add('active');
+                break;
+            case 'events':
+                navItems[1].classList.add('active');
+                mobileNavItems[1].classList.add('active');
+                break;
+            case 'notifications':
+                navItems[3].classList.add('active');
+                mobileNavItems[2].classList.add('active');
+                break;
+            case 'profile':
+                navItems[4].classList.add('active');
+                mobileNavItems[3].classList.add('active');
+                break;
         }
-    });
-}
-
-function toggleChat() {
-    state.chatOpen = !state.chatOpen;
-    if (state.chatOpen) {
-        elements.chatContainer.classList.add('open');
-        elements.chatInput.focus();
-    } else {
-        elements.chatContainer.classList.remove('open');
+    }
+    
+    if (window.innerWidth <= 1024) {
+        toggleSidebar();
     }
 }
 
-function sendChatMessage() {
-    const message = elements.chatInput.value.trim();
-    if (!message) return;
-    
-    addChatMessage(message, 'user');
-    elements.chatInput.value = '';
-    
-    setTimeout(() => {
-        const response = generateAIResponse(message);
-        addChatMessage(response, 'bot');
-    }, 1000);
+function showModal(modalId) {
+    document.getElementById(modalId).classList.add('active');
 }
 
-function addChatMessage(message, sender) {
-    const messageElement = document.createElement('div');
-    messageElement.className = `message ${sender}`;
-    messageElement.textContent = message;
-    elements.chatMessages.appendChild(messageElement);
-    elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
 }
 
-function generateAIResponse(message) {
-    const lowerMessage = message.toLowerCase();
+function showSellModal() {
+    showModal('sellModal');
+}
+
+function showEditProfileModal() {
+    showModal('editProfileModal');
+}
+
+function showCreateEventModal() {
+    showModal('createEventModal');
+}
+
+function showMarketplace() {
+    showPage('home');
+}
+
+function handleSearch() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    const searchResults = document.getElementById('searchResults');
     
-    if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-        return "Hello! I'm your AI assistant. How can I help you with AutoFlow AI today?";
-    } else if (lowerMessage.includes('workflow') || lowerMessage.includes('automate')) {
-        return "AutoFlow AI uses multiple specialized agents to break down your goals into tasks. Try entering a goal like 'Create a marketing plan' in the command console.";
-    } else if (lowerMessage.includes('agent') || lowerMessage.includes('planner') || lowerMessage.includes('executor')) {
-        return "AutoFlow AI has 5 specialized agents: Planner (breaks down goals), Executor (runs tasks), QA (verifies quality), Memory (stores workflows), and Report (generates summaries).";
-    } else if (lowerMessage.includes('help') || lowerMessage.includes('how')) {
-        return "To use AutoFlow AI, simply type your goal in the command console and click Run. The system will simulate multiple AI agents working together to accomplish your goal.";
-    } else if (lowerMessage.includes('feature') || lowerMessage.includes('what can')) {
-        return "AutoFlow AI features include multi-agent simulation, workflow history, progress tracking, export capabilities, theme switching, and more - all running entirely in your browser.";
-    } else {
-        return "I understand you're asking about: '" + message + "'. For detailed assistance with AutoFlow AI features, please refer to the documentation or try using the command console to run a workflow.";
+    if (searchTerm.length === 0) {
+        searchResults.classList.remove('active');
+        return;
     }
-}
 
-function toggleTheme() {
-    document.body.classList.toggle('dark-theme');
-    const isDark = document.body.classList.contains('dark-theme');
-    elements.themeToggle.innerHTML = isDark ? 
-        '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15V1Z" fill="currentColor"/></svg><span>Light Mode</span>' : 
-        '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15V1Z" fill="currentColor"/></svg><span>Dark Mode</span>';
-    
-    if (isDark) {
-        document.documentElement.style.setProperty('--bg-primary', '#0f0f0f');
-        document.documentElement.style.setProperty('--bg-secondary', '#1a1a1a');
-        document.documentElement.style.setProperty('--bg-tertiary', '#2a2a2a');
-        document.documentElement.style.setProperty('--bg-surface', '#1a1a1a');
-        document.documentElement.style.setProperty('--text-primary', '#f5f5f5');
-        document.documentElement.style.setProperty('--text-secondary', '#aaaaaa');
-        document.documentElement.style.setProperty('--border-color', '#333333');
-        document.documentElement.style.setProperty('--border-light', '#2a2a2a');
-    } else {
-        document.documentElement.style.setProperty('--bg-primary', '#ffffff');
-        document.documentElement.style.setProperty('--bg-secondary', '#f8f9fa');
-        document.documentElement.style.setProperty('--bg-tertiary', '#f1f3f4');
-        document.documentElement.style.setProperty('--bg-surface', '#ffffff');
-        document.documentElement.style.setProperty('--text-primary', '#202124');
-        document.documentElement.style.setProperty('--text-secondary', '#5f6368');
-        document.documentElement.style.setProperty('--border-color', '#dadce0');
-        document.documentElement.style.setProperty('--border-light', '#e8eaed');
-    }
-}
-
-function runWorkflow() {
-    const goal = elements.goalInput.value.trim();
-    if (!goal) return;
-    
-    clearWorkflow();
-    
-    state.currentWorkflow = {
-        id: Date.now(),
-        goal: goal,
-        tasks: [],
-        status: 'running',
-        startTime: new Date(),
-        progress: 0
-    };
-    
-    state.workflows.unshift(state.currentWorkflow);
-    if (state.workflows.length > 50) state.workflows.pop();
-    localStorage.setItem('autoflow-workflows', JSON.stringify(state.workflows));
-    
-    updateAchievement('first-workflow', true);
-    if (state.workflows.length >= 5) updateAchievement('five-workflows', true);
-    
-    simulateWorkflow(goal);
-    
-    addLogEntry('SYSTEM', `Starting workflow: "${goal}"`);
-}
-
-function runDemo() {
-    const demos = [
-        "Create a marketing plan for a new productivity app",
-        "Plan a 7-day vacation to Japan",
-        "Develop a content calendar for a tech blog",
-        "Design a workout routine for beginners"
+    const results = [
+        ...sampleProducts.filter(item => 
+            item.title.toLowerCase().includes(searchTerm) || 
+            item.description.toLowerCase().includes(searchTerm)
+        ).map(item => ({...item, type: 'product'})),
+        
+        ...sampleEvents.filter(event => 
+            event.title.toLowerCase().includes(searchTerm) ||
+            event.description.toLowerCase().includes(searchTerm)
+        ).map(event => ({...event, type: 'event'})),
+        
+        ...sampleNotes.filter(note =>
+            note.title.toLowerCase().includes(searchTerm) ||
+            note.subject.toLowerCase().includes(searchTerm)
+        ).map(note => ({...note, type: 'note'}))
     ];
-    const randomDemo = demos[Math.floor(Math.random() * demos.length)];
-    elements.goalInput.value = randomDemo;
-    runWorkflow();
+
+    displaySearchResults(results);
+    searchResults.classList.add('active');
 }
 
-async function simulateWorkflow(goal) {
-    updateProgress(0, "Initializing agents...");
-    
-    await activateAgent('planner', 'Analyzing goal and breaking it down into tasks...');
-    const tasks = await plannerAgent(goal);
-    addActivity('planner', `I've broken down "${goal}" into ${tasks.length} tasks`);
-    
-    updateTimeline(tasks);
-    
-    await activateAgent('executor', 'Starting task execution...');
-    for (let i = 0; i < tasks.length; i++) {
-        const task = tasks[i];
-        updateProgress((i / tasks.length) * 100, `Executing: ${task.title}`);
+function displaySearchResults(results) {
+    const container = document.getElementById('searchResults');
+    container.innerHTML = '';
+
+    if (results.length === 0) {
+        container.innerHTML = '<div class="search-result-item">No results found</div>';
+        return;
+    }
+
+    results.forEach(item => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'search-result-item';
+        resultItem.onclick = () => handleSearchResultClick(item);
         
-        await activateAgent('executor', `Working on: ${task.title}`);
-        await executorAgent(task);
-        addActivity('executor', `Completed: ${task.title}`);
-        
-        await activateAgent('qa', `Verifying: ${task.title}`);
-        await qaAgent(task);
-        addActivity('qa', `Verified: ${task.title}`);
-        
-        updateTaskStatus(i, 'completed');
-    }
-    
-    await activateAgent('memory', 'Storing workflow in memory...');
-    await memoryAgent(state.currentWorkflow);
-    addActivity('memory', 'Workflow saved to memory');
-    
-    await activateAgent('report', 'Generating final report...');
-    const report = await reportAgent(state.currentWorkflow);
-    addActivity('report', 'Final report generated');
-    
-    updateProgress(100, "Workflow completed!");
-    state.currentWorkflow.status = 'completed';
-    state.currentWorkflow.endTime = new Date();
-    state.currentWorkflow.report = report;
-    
-    localStorage.setItem('autoflow-workflows', JSON.stringify(state.workflows));
-    
-    showNotification('Workflow completed successfully!', 'success');
-    addLogEntry('SYSTEM', `Workflow completed: "${goal}"`);
-    
-    setTimeout(() => {
-        if (confirm('Workflow completed! Would you like to download the report?')) {
-            downloadReport(report, goal);
-        }
-    }, 1000);
-}
-
-async function plannerAgent(goal) {
-    const delay = 1500;
-    await simulateDelay(delay);
-    
-    let tasks = [];
-    
-    if (goal.toLowerCase().includes('marketing') || goal.toLowerCase().includes('promote')) {
-        tasks = [
-            { id: 1, title: "Market Research", description: "Analyze target audience and competitors", status: "pending" },
-            { id: 2, title: "Define Value Proposition", description: "Identify unique selling points", status: "pending" },
-            { id: 3, title: "Create Content Strategy", description: "Plan blog posts, social media, and ads", status: "pending" },
-            { id: 4, title: "Set KPIs", description: "Define key performance indicators", status: "pending" },
-            { id: 5, title: "Allocate Budget", description: "Determine marketing spend across channels", status: "pending" }
-        ];
-    } else if (goal.toLowerCase().includes('vacation') || goal.toLowerCase().includes('trip')) {
-        tasks = [
-            { id: 1, title: "Research Destinations", description: "Find the best places to visit", status: "pending" },
-            { id: 2, title: "Book Flights", description: "Find and book the best flight options", status: "pending" },
-            { id: 3, title: "Arrange Accommodation", description: "Book hotels or rentals", status: "pending" },
-            { id: 4, title: "Create Itinerary", description: "Plan daily activities and sights", status: "pending" },
-            { id: 5, title: "Prepare Travel Documents", description: "Check visa requirements and travel insurance", status: "pending" }
-        ];
-    } else if (goal.toLowerCase().includes('content') || goal.toLowerCase().includes('calendar')) {
-        tasks = [
-            { id: 1, title: "Define Content Themes", description: "Establish main topics and categories", status: "pending" },
-            { id: 2, title: "Research Keywords", description: "Identify relevant search terms", status: "pending" },
-            { id: 3, title: "Plan Publishing Schedule", description: "Create a timeline for content releases", status: "pending" },
-            { id: 4, title: "Assign Content Creation", description: "Delegate writing tasks to team members", status: "pending" },
-            { id: 5, title: "Set Up Promotion Strategy", description: "Plan how to distribute content", status: "pending" }
-        ];
-    } else {
-        tasks = [
-            { id: 1, title: "Research Phase", description: "Gather information and requirements", status: "pending" },
-            { id: 2, title: "Planning Phase", description: "Create a detailed action plan", status: "pending" },
-            { id: 3, title: "Execution Phase", description: "Implement the plan step by step", status: "pending" },
-            { id: 4, title: "Review Phase", description: "Evaluate results and make adjustments", status: "pending" },
-            { id: 5, title: "Finalization", description: "Complete and deliver the final output", status: "pending" }
-        ];
-    }
-    
-    state.currentWorkflow.tasks = tasks;
-    return tasks;
-}
-
-async function executorAgent(task) {
-    const delay = 2000;
-    await simulateDelay(delay);
-    
-    const subtasks = [
-        "Gathering resources...",
-        "Processing data...",
-        "Applying algorithms...",
-        "Generating output..."
-    ];
-    
-    for (const subtask of subtasks) {
-        addLogEntry('EXECUTOR', `${task.title}: ${subtask}`);
-        await simulateDelay(delay / subtasks.length);
-    }
-    
-    task.status = 'executed';
-    return task;
-}
-
-async function qaAgent(task) {
-    const delay = 1200;
-    await simulateDelay(delay);
-    
-    const checks = [
-        "Checking completeness...",
-        "Verifying accuracy...",
-        "Testing functionality...",
-        "Validating results..."
-    ];
-    
-    for (const check of checks) {
-        addLogEntry('QA', `${task.title}: ${check}`);
-        await simulateDelay(delay / checks.length);
-    }
-    
-    task.status = 'verified';
-    return task;
-}
-
-async function memoryAgent(workflow) {
-    const delay = 800;
-    await simulateDelay(delay);
-    
-    addLogEntry('MEMORY', 'Storing workflow data...');
-    await simulateDelay(delay);
-    addLogEntry('MEMORY', 'Workflow saved successfully');
-    
-    return workflow;
-}
-
-async function reportAgent(workflow) {
-    const delay = 1500;
-    await simulateDelay(delay);
-    
-    const report = `
-AUTOMATION REPORT
-=================
-Goal: ${workflow.goal}
-Completed: ${new Date().toLocaleString()}
-Duration: ${Math.round((workflow.endTime - workflow.startTime) / 1000)} seconds
-Tasks Completed: ${workflow.tasks.length}
-
-TASK BREAKDOWN:
-${workflow.tasks.map(task => `✓ ${task.title}: ${task.description}`).join('\n')}
-
-SUMMARY:
-All tasks were completed successfully. The workflow executed as planned with all quality checks passed. The final output meets the specified requirements.
-
-NEXT STEPS:
-Consider implementing the plan and monitoring results for continuous improvement.
-
-Generated by AutoFlow AI Web Edition
+        if (item.type === 'product') {
+            resultItem.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 40px; height: 40px; border-radius: 8px; background-image: url('${item.image}'); background-size: cover; background-position: center;"></div>
+                    <div>
+                        <div style="font-weight: 500;">${item.title}</div>
+                        <div style="color: var(--primary); font-weight: 600;">$${item.price}</div>
+                        <div style="font-size: 0.8rem; color: var(--dark-gray);">Product • ${item.category}</div>
+                    </div>
+                </div>
             `;
-    
-    addLogEntry('REPORT', 'Final report generated');
-    return report;
-}
+        } else if (item.type === 'event') {
+            resultItem.innerHTML = `
+                <div>
+                    <div style="font-weight: 500;">${item.title}</div>
+                    <div style="font-size: 0.8rem; color: var(--dark-gray);">Event • ${item.location}</div>
+                </div>
+            `;
+        } else if (item.type === 'note') {
+            resultItem.innerHTML = `
+                <div>
+                    <div style="font-weight: 500;">${item.title}</div>
+                    <div style="font-size: 0.8rem; color: var(--dark-gray);">Notes • ${item.subject}</div>
+                </div>
+            `;
+        }
 
-async function activateAgent(agent, message) {
-    const bubble = document.getElementById(`${agent}-bubble`);
-    bubble.classList.add('active');
-    
-    addActivity(agent, message, true);
-    
-    const delay = 1500;
-    await simulateDelay(delay);
-    
-    bubble.classList.remove('active');
-}
-
-function addActivity(agent, message, withTyping = false) {
-    const activityItem = document.createElement('div');
-    activityItem.className = 'activity-item';
-    
-    const agentName = agent.charAt(0).toUpperCase() + agent.slice(1);
-    const avatar = document.createElement('div');
-    avatar.className = 'activity-avatar';
-    avatar.style.backgroundColor = state.agentColors[agent];
-    avatar.textContent = agentName.charAt(0);
-    
-    const content = document.createElement('div');
-    content.className = 'activity-content';
-    
-    const header = document.createElement('div');
-    header.className = 'activity-header';
-    
-    const agentSpan = document.createElement('span');
-    agentSpan.className = 'activity-agent';
-    agentSpan.textContent = `${agentName} Agent`;
-    
-    const timeSpan = document.createElement('span');
-    timeSpan.className = 'activity-time';
-    timeSpan.textContent = 'Just now';
-    
-    header.appendChild(agentSpan);
-    header.appendChild(timeSpan);
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'activity-message';
-    
-    if (withTyping) {
-        messageDiv.classList.add('typing');
-        setTimeout(() => {
-            messageDiv.classList.remove('typing');
-            messageDiv.textContent = message;
-        }, 1500);
-    } else {
-        messageDiv.textContent = message;
-    }
-    
-    content.appendChild(header);
-    content.appendChild(messageDiv);
-    
-    activityItem.appendChild(avatar);
-    activityItem.appendChild(content);
-    
-    elements.activityFeed.prepend(activityItem);
-    
-    elements.activityFeed.scrollTop = 0;
-}
-
-function updateTimeline(tasks) {
-    elements.taskTimeline.innerHTML = '';
-    
-    tasks.forEach((task, index) => {
-        const timelineItem = document.createElement('div');
-        timelineItem.className = 'timeline-item';
-        timelineItem.id = `task-${task.id}`;
-        
-        const content = document.createElement('div');
-        content.className = 'timeline-content';
-        
-        const header = document.createElement('div');
-        header.className = 'timeline-header';
-        
-        const title = document.createElement('span');
-        title.className = 'timeline-title';
-        title.textContent = task.title;
-        
-        const status = document.createElement('span');
-        status.className = 'timeline-status';
-        status.textContent = 'Pending';
-        status.id = `task-status-${task.id}`;
-        
-        header.appendChild(title);
-        header.appendChild(status);
-        
-        const desc = document.createElement('p');
-        desc.className = 'timeline-desc';
-        desc.textContent = task.description;
-        
-        content.appendChild(header);
-        content.appendChild(desc);
-        
-        timelineItem.appendChild(content);
-        elements.taskTimeline.appendChild(timelineItem);
+        container.appendChild(resultItem);
     });
 }
 
-function updateTaskStatus(taskIndex, status) {
-    const task = state.currentWorkflow.tasks[taskIndex];
-    const statusElement = document.getElementById(`task-status-${task.id}`);
-    if (statusElement) {
-        statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+function handleSearchResultClick(item) {
+    document.getElementById('searchResults').classList.remove('active');
+    document.getElementById('searchInput').value = '';
+
+    if (item.type === 'product') {
+        initiatePurchase(item.id);
+    } else if (item.type === 'event') {
+        showEventDetail(item.id);
+    } else if (item.type === 'note') {
+        showNotesDetail(item.id);
+    }
+}
+
+function registerForEvent(eventId) {
+    const event = sampleEvents.find(e => e.id === eventId);
+    if (event) {
+        event.registered = !event.registered;
+        displayAllEvents();
+        displayUpcomingEvents();
         
-        if (status === 'completed') {
-            statusElement.style.backgroundColor = '#e6f4ea';
-            statusElement.style.color = '#137333';
+        if (event.registered) {
+            showToast(`Successfully registered for ${event.title}!`);
+            notifications.unshift({
+                id: notifications.length + 1,
+                type: "success",
+                title: "Event Registration",
+                message: `You've registered for ${event.title}`,
+                time: "Just now",
+                icon: "fas fa-calendar-check",
+                read: false
+            });
+            displayNotifications();
+            updateNotificationBadge();
+        } else {
+            showToast(`Unregistered from ${event.title}`);
         }
     }
 }
 
-function updateProgress(percent, currentTask) {
-    elements.progressFill.style.width = `${percent}%`;
-    elements.progressPercent.textContent = Math.round(percent);
-    elements.currentTask.textContent = currentTask;
+function displayTrendingProducts() {
+    const container = document.getElementById('trendingProducts');
+    container.innerHTML = '';
+    
+    sampleProducts.forEach(product => {
+        const productCard = `
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('${product.image}')">
+                    <div class="product-badge">${product.badge}</div>
+                </div>
+                <div class="product-content">
+                    <div class="product-title">${product.title}</div>
+                    <div class="product-price">$${product.price}</div>
+                    <div class="product-seller">
+                        <div class="seller-avatar">${product.seller.avatar}</div>
+                        ${product.seller.name}
+                    </div>
+                    <button class="buy-btn" onclick="initiatePurchase(${product.id})">
+                        <i class="fas fa-shopping-cart"></i> Buy Now
+                    </button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += productCard;
+    });
 }
 
-function addLogEntry(agent, message) {
-    const logEntry = document.createElement('div');
-    logEntry.className = 'log-entry';
+function displayUpcomingEvents() {
+    const container = document.getElementById('upcomingEvents');
+    container.innerHTML = '';
     
-    const time = new Date().toLocaleTimeString();
-    
-    logEntry.innerHTML = `
-        <span class="log-time">[${time}]</span>
-        <span class="log-agent">[${agent.toUpperCase()}]</span>
-        <span class="log-message">${message}</span>
-    `;
-    
-    elements.systemLogs.appendChild(logEntry);
-    elements.systemLogs.scrollTop = elements.systemLogs.scrollHeight;
+    sampleEvents.slice(0, 2).forEach(event => {
+        const eventCard = `
+            <div class="card">
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-day">${event.day}</div>
+                        <div class="event-month">${event.month}</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title">${event.title}</div>
+                        <div class="event-location">
+                            <i class="fas fa-map-marker-alt"></i> ${event.location}
+                        </div>
+                        <div class="event-time">${event.time}</div>
+                        <button class="register-btn ${event.registered ? 'registered' : ''}" 
+                                onclick="event.stopPropagation(); registerForEvent(${event.id})">
+                            ${event.registered ? 'Registered' : 'Register Now'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += eventCard;
+    });
 }
 
-function showNotification(message, type = 'info') {
-    elements.notification.className = `notification ${type}`;
-    elements.notification.querySelector('.notification-message').textContent = message;
-    elements.notification.classList.add('show');
+function displayAllEvents() {
+    const container = document.getElementById('allEvents');
+    container.innerHTML = '';
+    
+    sampleEvents.forEach(event => {
+        const eventCard = `
+            <div class="card">
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-day">${event.day}</div>
+                        <div class="event-month">${event.month}</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title">${event.title}</div>
+                        <div class="event-location">
+                            <i class="fas fa-map-marker-alt"></i> ${event.location}
+                        </div>
+                        <div class="event-time">${event.time}</div>
+                        <button class="register-btn ${event.registered ? 'registered' : ''}" 
+                                onclick="event.stopPropagation(); registerForEvent(${event.id})">
+                            ${event.registered ? 'Registered' : 'Register Now'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += eventCard;
+    });
+}
+
+function displayNotes() {
+    const container = document.getElementById('notesGrid');
+    container.innerHTML = '';
+    
+    sampleNotes.forEach(note => {
+        const noteCard = `
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('${note.image}')">
+                    <div class="product-badge">Notes</div>
+                </div>
+                <div class="product-content">
+                    <div class="product-title">${note.title}</div>
+                    <div class="product-price">$${note.price}</div>
+                    <div class="product-seller">
+                        <i class="fas fa-star" style="color: var(--warning);"></i>
+                        ${note.rating}
+                    </div>
+                    <button class="buy-btn" onclick="downloadNotes(${note.id})">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += noteCard;
+    });
+}
+
+function displayMyListings() {
+    const container = document.getElementById('myListingsContainer');
+    container.innerHTML = '';
+    
+    myListings.forEach(listing => {
+        const listingItem = `
+            <div class="listing-item">
+                <div class="listing-image" style="background-image: url('${listing.image}')">
+                    <i class="fas fa-box" style="color: white;"></i>
+                </div>
+                <div class="listing-details">
+                    <div class="listing-title">${listing.title}</div>
+                    <div class="listing-price">$${listing.price}</div>
+                    <div class="listing-status ${listing.status === 'available' ? 'status-available' : 'status-sold'}">
+                        ${listing.status === 'available' ? 'Available' : 'Sold'}
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.8rem; color: var(--dark-gray);">${listing.views} views</div>
+                    <button class="btn btn-primary" style="margin-top: 0.5rem; padding: 0.5rem 1rem;" 
+                            onclick="editListing(${listing.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += listingItem;
+    });
+}
+
+function displaySavedItems() {
+    const container = document.getElementById('savedItemsGrid');
+    container.innerHTML = '';
+    
+    savedItems.forEach(item => {
+        const savedCard = `
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('${item.image}')">
+                    <div class="product-badge">Saved</div>
+                </div>
+                <div class="product-content">
+                    <div class="product-title">${item.title}</div>
+                    <div class="product-price">$${item.price}</div>
+                    <div class="product-seller">
+                        <i class="fas fa-calendar"></i>
+                        Saved on ${item.savedDate}
+                    </div>
+                    <button class="buy-btn" onclick="initiatePurchase(${item.id})">
+                        <i class="fas fa-shopping-cart"></i> Buy Now
+                    </button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += savedCard;
+    });
+}
+
+function displayNotifications() {
+    const container = document.getElementById('notificationsList');
+    container.innerHTML = '';
+    
+    notifications.forEach(notification => {
+        const notificationCard = `
+            <div class="notification-card ${notification.read ? 'read' : ''}" onclick="markNotificationRead(${notification.id})">
+                <div class="notification-icon ${notification.type}">
+                    <i class="${notification.icon}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${notification.title}</div>
+                    <div class="notification-message">${notification.message}</div>
+                    <div class="notification-time">${notification.time}</div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += notificationCard;
+    });
+}
+
+function initiatePurchase(productId) {
+    const product = sampleProducts.find(p => p.id === productId) || 
+                   savedItems.find(p => p.id === productId);
+    
+    if (product) {
+        currentProduct = product;
+        const content = document.getElementById('purchaseContent');
+        content.innerHTML = `
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="width: 80px; height: 80px; border-radius: 8px; background-image: url('${product.image}'); background-size: cover; background-position: center;"></div>
+                <div>
+                    <h3 style="margin-bottom: 0.5rem;">${product.title}</h3>
+                    <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary);">$${product.price}</div>
+                    <div style="font-size: 0.9rem; color: var(--dark-gray); margin-top: 0.5rem;">Seller: ${product.seller ? product.seller.name : 'CampusConnect'}</div>
+                </div>
+            </div>
+        `;
+        showModal('purchaseModal');
+    }
+}
+
+function completePurchase() {
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    if (currentProduct) {
+        showToast(`Purchase completed! You bought ${currentProduct.title} for $${currentProduct.price}. Contact seller for pickup details.`);
+        closeModal('purchaseModal');
+        
+        notifications.unshift({
+            id: notifications.length + 1,
+            type: "success",
+            title: "Purchase Successful!",
+            message: `You bought ${currentProduct.title} for $${currentProduct.price}`,
+            time: "Just now",
+            icon: "fas fa-shopping-bag",
+            read: false
+        });
+        displayNotifications();
+        updateNotificationBadge();
+    }
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
     
     setTimeout(() => {
-        elements.notification.classList.remove('show');
+        toast.classList.remove('show');
     }, 3000);
 }
 
-function updateAchievements() {
-    for (const [id, achieved] of Object.entries(state.achievements)) {
-        const element = document.getElementById(id);
-        if (element) {
-            if (achieved) {
-                element.classList.remove('locked');
-                element.classList.add('unlocked');
-            } else {
-                element.classList.add('locked');
-                element.classList.remove('unlocked');
-            }
-        }
-    }
-}
+function handleSellItem() {
+    const title = document.getElementById('itemTitle').value;
+    const category = document.getElementById('itemCategory').value;
+    const price = document.getElementById('itemPrice').value;
+    const condition = document.getElementById('itemCondition').value;
+    const description = document.getElementById('itemDescription').value;
+    const image = document.getElementById('itemImage').value || "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80";
 
-function updateAchievement(id, achieved) {
-    state.achievements[id] = achieved;
-    localStorage.setItem('autoflow-achievements', JSON.stringify(state.achievements));
-    updateAchievements();
-}
-
-function exportWorkflow() {
-    if (!state.currentWorkflow) {
-        showNotification('No workflow to export', 'warning');
+    if (!title || !category || !price || !condition || !description) {
+        showToast('Please fill in all fields!');
         return;
     }
+
+    const newProduct = {
+        id: sampleProducts.length + 1,
+        title: title,
+        price: parseFloat(price),
+        category: category,
+        badge: "New",
+        seller: { name: "You", avatar: "SP" },
+        description: description,
+        image: image
+    };
+
+    sampleProducts.unshift(newProduct);
     
-    const dataStr = JSON.stringify(state.currentWorkflow, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    displayTrendingProducts();
     
-    const exportFileDefaultName = `autoflow-workflow-${state.currentWorkflow.id}.json`;
+    closeModal('sellModal');
+    showToast('Your item has been listed successfully!');
     
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-    
-    showNotification('Workflow exported as JSON', 'success');
-    addLogEntry('SYSTEM', 'Workflow exported to JSON');
+    document.getElementById('sellForm').reset();
 }
 
-function downloadReport(report, goal) {
-    const dataStr = 'data:text/plain;charset=utf-8,' + encodeURIComponent(report);
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute('href', dataStr);
-    downloadAnchorNode.setAttribute('download', `autoflow-report-${goal.substring(0, 20)}.txt`);
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+function handleProfileUpdate() {
+    const name = document.getElementById('profileName').value;
+    const email = document.getElementById('profileEmail').value;
+    const major = document.getElementById('profileMajor').value;
+    const year = document.getElementById('profileYear').value;
+    const bio = document.getElementById('profileBio').value;
+
+    document.querySelector('.profile-name').textContent = name;
+    document.querySelector('.profile-role').textContent = major + ' Student';
+    
+    closeModal('editProfileModal');
+    showToast('Profile updated successfully!');
 }
 
-function clearInput() {
-    elements.goalInput.value = '';
-}
+function handleCreateEvent() {
+    const title = document.getElementById('eventTitle').value;
+    const date = document.getElementById('eventDate').value;
+    const time = document.getElementById('eventTime').value;
+    const location = document.getElementById('eventLocation').value;
+    const description = document.getElementById('eventDescription').value;
 
-function clearLogs() {
-    elements.systemLogs.innerHTML = '';
-    addLogEntry('SYSTEM', 'Logs cleared');
-}
-
-function clearWorkflow() {
-    elements.activityFeed.innerHTML = `
-        <div class="activity-item">
-            <div class="activity-avatar" style="background-color: #1a73e8;">P</div>
-            <div class="activity-content">
-                <div class="activity-header">
-                    <span class="activity-agent">Planner Agent</span>
-                    <span class="activity-time">Just now</span>
-                </div>
-                <div class="activity-message">
-                    Ready to break down your goals into actionable tasks.
-                </div>
-            </div>
-        </div>
-    `;
-    
-    elements.taskTimeline.innerHTML = `
-        <div class="timeline-item">
-            <div class="timeline-content">
-                <div class="timeline-header">
-                    <span class="timeline-title">Waiting for input</span>
-                    <span class="timeline-status">Idle</span>
-                </div>
-                <p class="timeline-desc">Enter a goal in the command console to begin automation.</p>
-            </div>
-        </div>
-    `;
-    
-    updateProgress(0, "None");
-}
-
-function loadSampleWorkflows() {
-    const sampleWorkflows = [
-        {
-            id: 1,
-            goal: "Create a social media strategy",
-            tasks: [
-                { id: 1, title: "Audience Research", description: "Identify target demographics", status: "completed" },
-                { id: 2, title: "Platform Selection", description: "Choose appropriate social networks", status: "completed" },
-                { id: 3, title: "Content Planning", description: "Develop posting schedule and themes", status: "completed" }
-            ],
-            status: "completed",
-            startTime: new Date(Date.now() - 86400000),
-            endTime: new Date(Date.now() - 86300000)
-        },
-        {
-            id: 2,
-            goal: "Plan a product launch",
-            tasks: [
-                { id: 1, title: "Market Analysis", description: "Research competitors and market fit", status: "completed" },
-                { id: 2, title: "Launch Timeline", description: "Create detailed schedule", status: "completed" },
-                { id: 3, title: "Marketing Materials", description: "Develop promotional content", status: "completed" }
-            ],
-            status: "completed",
-            startTime: new Date(Date.now() - 172800000),
-            endTime: new Date(Date.now() - 171800000)
-        }
-    ];
-    
-    state.workflows = sampleWorkflows;
-    localStorage.setItem('autoflow-workflows', JSON.stringify(state.workflows));
-}
-
-function makeDraggable(element) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    const header = element.querySelector('.console-header');
-    
-    header.onmousedown = dragMouseDown;
-    
-    function dragMouseDown(e) {
-        e.preventDefault();
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
+    if (!title || !date || !time || !location || !description) {
+        showToast('Please fill in all fields!');
+        return;
     }
+
+    const eventDate = new Date(date);
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const day = eventDate.getDate();
+    const month = months[eventDate.getMonth()];
+
+    const newEvent = {
+        id: sampleEvents.length + 1,
+        title: title,
+        day: day.toString(),
+        month: month,
+        location: location,
+        time: time,
+        description: description,
+        registered: false
+    };
+
+    sampleEvents.unshift(newEvent);
     
-    function elementDrag(e) {
-        e.preventDefault();
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        
-        element.style.top = (element.offsetTop - pos2) + "px";
-        element.style.left = (element.offsetLeft - pos1) + "px";
-    }
+    displayUpcomingEvents();
+    displayAllEvents();
     
-    function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
+    closeModal('createEventModal');
+    showToast('Event created successfully!');
+    
+    document.getElementById('eventForm').reset();
+}
+
+function downloadNotes(noteId) {
+    const note = sampleNotes.find(n => n.id === noteId);
+    if (note) {
+        showToast(`Downloading "${note.title}" notes...`);
     }
 }
 
-function simulateDelay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function markNotificationRead(notificationId) {
+    const notification = notifications.find(n => n.id === notificationId);
+    if (notification && !notification.read) {
+        notification.read = true;
+        displayNotifications();
+        updateNotificationBadge();
+    }
 }
 
-function showTemplates() {
-    alert('Workflow templates feature would open here');
+function markAllNotificationsRead() {
+    notifications.forEach(notification => {
+        notification.read = true;
+    });
+    displayNotifications();
+    updateNotificationBadge();
+    showToast('All notifications marked as read');
 }
 
-function showHistory() {
-    alert('Workflow history feature would open here');
+function updateNotificationBadge() {
+    const unreadCount = notifications.filter(n => !n.read).length;
+    const badge = document.getElementById('notificationBadge');
+    const sidebarBadge = document.getElementById('sidebarNotificationBadge');
+    
+    if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.style.display = 'flex';
+        sidebarBadge.textContent = unreadCount;
+        sidebarBadge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+        sidebarBadge.style.display = 'none';
+    }
 }
 
-function showSettings() {
-    alert('Settings panel would open here');
+function getProductIcon(category) {
+    const icons = {
+        'books': 'book',
+        'notes': 'file-alt',
+        'electronics': 'laptop',
+        'clothing': 'tshirt'
+    };
+    return icons[category] || 'box';
 }
 
-document.addEventListener('DOMContentLoaded', init);
+function showProductDetail(productId) {
+    const product = sampleProducts.find(p => p.id === productId);
+    if (product) {
+        alert(`Product Details:\n\nTitle: ${product.title}\nPrice: $${product.price}\nCategory: ${product.category}\nDescription: ${product.description}\nSeller: ${product.seller.name}`);
+    }
+}
+
+function showEventDetail(eventId) {
+    const event = sampleEvents.find(e => e.id === eventId);
+    if (event) {
+        alert(`Event Details:\n\nTitle: ${event.title}\nDate: ${event.day} ${event.month}\nTime: ${event.time}\nLocation: ${event.location}\nDescription: ${event.description}`);
+    }
+}
+
+function showNotesDetail(noteId) {
+    const note = sampleNotes.find(n => n.id === noteId);
+    if (note) {
+        alert(`Notes Details:\n\nTitle: ${note.title}\nSubject: ${note.subject}\nChapters: ${note.chapters}\nPrice: $${note.price}\nRating: ${note.rating}/5.0`);
+    }
+}
+
+function editListing(listingId) {
+    const listing = myListings.find(l => l.id === listingId);
+    if (listing) {
+        showToast(`Editing listing: ${listing.title}`);
+    }
+}
+
+function showUploadNotesModal() {
+    showToast('Upload Notes feature coming soon!');
+}
+
+function showRatingsModal() {
+    showToast('Ratings and reviews feature coming soon!');
+}
+
+function showSettingsModal() {
+    showToast('Settings feature coming soon!');
+}
+
+function showFAQAnswer(faqId) {
+    const answers = {
+        1: "To sell an item:\n1. Click the 'Sell' button\n2. Fill in item details\n3. Set your price\n4. Upload photos\n5. Publish your listing",
+        2: "To contact a seller:\n1. Click on the item\n2. Click 'Contact Seller'\n3. Send your message\n4. Wait for response",
+        3: "We accept:\n- Cash (in-person)\n- Venmo\n- PayPal\n- Campus payment system",
+        4: "To report an issue:\n1. Go to Help & Support\n2. Contact our team\n3. Describe the issue\n4. We'll respond within 24 hours"
+    };
+    alert(answers[faqId] || "FAQ answer not found.");
+}
+
+function contactSupport() {
+    showToast('Support contact form coming soon!');
+}
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.classList.remove('active');
+    }
+}
+
+document.addEventListener('click', function(event) {
+    const searchResults = document.getElementById('searchResults');
+    const searchInput = document.getElementById('searchInput');
+    
+    if (!searchResults.contains(event.target) && event.target !== searchInput) {
+        searchResults.classList.remove('active');
+    }
+});
